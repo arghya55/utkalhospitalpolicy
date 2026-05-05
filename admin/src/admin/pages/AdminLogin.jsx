@@ -18,7 +18,7 @@ const AdminLogin = () => {
       setError("");
 
       const res = await axios.post(
-        "http://localhost:5000/api/admin/login",
+        "https://utkal-policy-backend.onrender.com",
         form
       );
 
