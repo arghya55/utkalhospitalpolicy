@@ -13,7 +13,7 @@ const CreateDepartment = () => {
 
   // ================= FETCH =================
   const fetchDepartments = async () => {
-    const res = await axios.get("http://localhost:5000/api/departments");
+    const res = await axios.get("https://utkal-policy-backend.onrender.com");
     setDepartments(res.data);
   };
 
