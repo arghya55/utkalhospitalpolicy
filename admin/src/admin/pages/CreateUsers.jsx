@@ -17,12 +17,12 @@ const CreateUsers = () => {
 
   // ================= FETCH =================
   const fetchUsers = async () => {
-    const res = await axios.get("http://localhost:5000/api/users");
+    const res = await axios.get("/users");
     setUsers(res.data);
   };
 
   const fetchDepartments = async () => {
-    const res = await axios.get("http://localhost:5000/api/departments");
+    const res = await axios.get("/departments");
     setDepartments(res.data);
   };
 
@@ -62,11 +62,11 @@ const CreateUsers = () => {
   }
 
   await axios.put(
-    `http://localhost:5000/api/users/${editUser._id}`,
+    `/users/${editUser._id}`,
     updatedData
   );
 } else {
-  await axios.post("http://localhost:5000/api/users", form);
+  await axios.post("/users", form);
 }
     setForm({
       name: "",
@@ -82,7 +82,7 @@ const CreateUsers = () => {
 
   // ================= DELETE =================
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:5000/api/users/${id}`);
+    await axios.delete(`/users/${id}`);
     fetchUsers();
   };
 
@@ -93,7 +93,7 @@ const handlePasswordUpdate = async (user) => {
 
   try {
     await axios.put(
-      `http://localhost:5000/api/users/${user._id}`,
+      `/users/${user._id}`,
       { password: newPassword }
     );
 

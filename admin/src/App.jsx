@@ -7,6 +7,8 @@ import AdminLogin from "./admin/pages/AdminLogin";
 // import UserLogin from "./admin/Component/UserLogin";
 
 import axios from "axios";
+axios.defaults.baseURL =
+  "https://utkalpolicybackend.onrender.com/api";
 
 // ================= AXIOS INTERCEPTOR =================
 axios.interceptors.request.use((config) => {

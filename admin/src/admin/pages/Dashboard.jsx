@@ -26,9 +26,9 @@ const Dashboard = () => {
   // ================= FETCH =================
   useEffect(() => {
     const fetchData = async () => {
-      const users = await axios.get("http://localhost:5000/api/users");
-      const departments = await axios.get("http://localhost:5000/api/departments");
-      const policies = await axios.get("http://localhost:5000/api/policies");
+      const users = await axios.get("/users");
+      const departments = await axios.get("/departments");
+      const policies = await axios.get("/policies");
 
       setStats({
         users: users.data.length,
