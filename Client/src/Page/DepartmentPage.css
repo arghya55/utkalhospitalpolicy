@@ -1069,3 +1069,197 @@ position: relative;
   background: #fecaca;
   color: #991b1b;
 }
+
+/* =========================
+   EXTRA RESPONSIVE FIX
+========================= */
+
+*{
+  box-sizing: border-box;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+  .dept-container{
+    padding: 16px 12px 30px;
+  }
+
+  /* HEADER */
+  .dept-header{
+    padding: 16px;
+    border-radius: 18px;
+    gap: 16px;
+  }
+
+  .dept-name{
+    font-size: 22px;
+    line-height: 1.4;
+    margin-top: 15px;
+  }
+
+  .nav-left,
+  .nav-right{
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav-right{
+    gap: 12px;
+  }
+
+  /* BUTTONS */
+  .backbtn,
+  .media-btn,
+  .add-policy-btn,
+  .add-sop-btn{
+    width: 100%;
+    min-height: 48px;
+    font-size: 14px;
+    justify-content: center;
+  }
+
+  /* FILTER */
+  .filter-box{
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .filter-dropdown{
+    width: 100%;
+  }
+
+  /* MEDIA UPLOAD */
+  .media-upload{
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .media-upload input,
+  .media-upload select,
+  .dropzone,
+  .upload-btn{
+    width: 100%;
+    min-width: 100%;
+  }
+
+  /* POLICY CARD */
+  .policy-card{
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .policy-header{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .policy-title{
+    width: 100%;
+  }
+
+  .policy-title h3{
+    font-size: 18px;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .policy-right{
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .status-dropdown{
+    width: 100%;
+  }
+
+  .card-actions{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .edit-btn,
+  .delete-btn{
+    width: 100%;
+    padding: 12px;
+  }
+
+  /* MODAL */
+  .modal-content{
+    width: 95%;
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .modal-actions{
+    flex-direction: column;
+  }
+
+  .modal-actions button{
+    width: 100%;
+  }
+
+  /* MEDIA */
+  .media-grid{
+    grid-template-columns: 1fr;
+  }
+
+  .media-card img,
+  .media-card video{
+    height: 220px;
+  }
+
+}
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 480px){
+
+  .dept-name{
+    font-size: 20px;
+  }
+
+  .policy-title h3{
+    font-size: 16px;
+  }
+
+  .policy-card p{
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .backbtn,
+  .media-btn,
+  .add-policy-btn,
+  .add-sop-btn{
+    font-size: 13px;
+    padding: 11px;
+  }
+
+  .media-card img,
+  .media-card video{
+    height: 190px;
+  }
+
+}
+
+/* ================= LARGE SCREEN ================= */
+
+@media (min-width: 1400px){
+
+  .dept-container{
+    max-width: 1600px;
+    margin: auto;
+  }
+
+  .policy-grid{
+    gap: 24px;
+  }
+
+}

@@ -75,27 +75,34 @@ const MediaCard = ({
             }
           />
 
-          {preview && (
-
-            <div
-              className="preview-modal"
-              onClick={() =>
-                setPreview(false)
-              }
-            >
-
-              <div className="preview-box">
-
-                <img
-                  src={mediaUrl}
-                  alt=""
-                  className="preview-image"
-                />
-
-              </div>
-
-            </div>
-          )}
+       {preview && (
+  <div
+    onClick={() => setPreview(false)}
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      background: "rgba(0,0,0,0.96)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 999999,
+      cursor: "pointer",
+    }}
+  >
+    <img
+      src={mediaUrl}
+      alt=""
+      style={{
+        width: "100vw",
+        height: "100vh",
+        objectFit: "contain",
+      }}
+    />
+  </div>
+)}
         </>
       )}
 

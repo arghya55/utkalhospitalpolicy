@@ -1,10 +1,11 @@
-/* MAIN CONTAINER */
+/* ================= MAIN CONTAINER ================= */
 .user-container {
   padding: 40px;
   min-height: 100vh;
   background: linear-gradient(135deg, #abecdc, #93b3e7);
   color: white;
   font-family: 'Inter', sans-serif;
+  overflow-x: auto;
 }
 
 /* HEADER */
@@ -13,10 +14,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
 .header h2 {
   color: #031b25;
+  font-size: 32px;
+  font-weight: 800;
 }
 
 /* BACK BUTTON */
@@ -24,144 +29,326 @@
   background: #334155;
   border: none;
   color: #fff;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 16px;
+  border-radius: 10px;
   cursor: pointer;
   transition: 0.3s;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .back-home:hover {
   background: #475569;
+  transform: translateY(-2px);
 }
 
 /* FORM CARD */
 .form-card {
-  background: #6a7c99;
-  padding: 20px;
-  border-radius: 10px;
+  background: rgba(106, 124, 153, 0.92);
+  backdrop-filter: blur(12px);
+
+  padding: 25px;
+  border-radius: 18px;
   margin-bottom: 30px;
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.18);
 }
 
 /* GRID */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 15px;
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 18px;
 }
 
 /* INPUT */
 .grid input,
 .grid select {
-  padding: 10px;
-  border-radius: 6px;
+  padding: 14px 16px;
+
+  border-radius: 12px;
   border: none;
   outline: none;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  background: rgba(255,255,255,0.95);
+
+  transition: 0.3s;
+}
+
+.grid input:focus,
+.grid select:focus {
+  box-shadow:
+    0 0 0 3px rgba(59,130,246,0.25);
+
+  transform: translateY(-1px);
 }
 
 /* BUTTON */
 .primary-btn {
   grid-column: span 2;
-  padding: 10px;
+
+  padding: 14px;
+
   border: none;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #46554c, #16a34a);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #46554c,
+      #16a34a
+    );
+
   color: white;
-  font-weight: bold;
+
+  font-weight: 700;
+  font-size: 15px;
+
   cursor: pointer;
+
   transition: 0.3s;
+
+  box-shadow:
+    0 8px 20px rgba(22,163,74,0.25);
 }
 
 .primary-btn:hover {
-  transform: scale(1.03);
+  transform:
+    scale(1.02)
+    translateY(-2px);
+}
+
+/* TABLE CARD */
+.table-card {
+  background: rgba(84, 95, 114, 0.95);
+
+  padding: 24px;
+  border-radius: 18px;
+
+  overflow-x: auto;
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.18);
 }
 
 /* TABLE */
-.table-card {
-  background: #545f72;
-  padding: 20px;
-  border-radius: 10px;
-}
-
 table {
   width: 100%;
+  min-width: 850px;
+
   border-collapse: collapse;
 }
 
-th, td {
-  padding: 12px;
-  text-align: left;
-}
-
+/* TABLE HEAD */
 th {
+  padding: 14px;
+  text-align: left;
+
   color: #38bdf8;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  background: rgba(255,255,255,0.04);
 }
 
+/* TABLE BODY */
+td {
+  padding: 14px;
+  text-align: left;
+
+  color: #ffffff;
+  font-size: 14px;
+}
+
+/* ROW */
 tr {
-  border-bottom: 1px solid #6298e4;
+  border-bottom:
+    1px solid rgba(255,255,255,0.08);
+
+  transition: 0.3s;
 }
 
-/* ACTION BUTTONS CONTAINER */
-td button {
-  margin-right: 6px;
+tbody tr:hover {
+  background:
+    rgba(255,255,255,0.05);
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* COMMON BUTTON */
+.edit-btn,
+.delete-btn,
+.password-btn {
+  border: none;
+
+  padding: 8px 12px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  transition: 0.3s;
 }
 
 /* EDIT BUTTON */
 .edit-btn {
-  background: rgb(68, 175, 7);
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: 0.3s;
+  background: rgba(34,197,94,0.18);
+  color: #22c55e;
 }
 
 .edit-btn:hover {
-  background: #0ea5e9;
+  background: #22c55e;
   color: white;
+
+  transform: translateY(-2px);
 }
 
 /* DELETE BUTTON */
 .delete-btn {
-  background: rgba(255, 0, 0, 0.15);
+  background: rgba(239,68,68,0.18);
   color: #ef4444;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: 0.3s;
 }
 
 .delete-btn:hover {
   background: #ef4444;
   color: white;
+
+  transform: translateY(-2px);
 }
 
 /* PASSWORD BUTTON */
 .password-btn {
-  background: rgba(168, 85, 247, 0.15);
-  color: #a855f7;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: 0.3s;
+  background: rgba(168,85,247,0.18);
+  color: #c084fc;
 }
 
 .password-btn:hover {
   background: #a855f7;
   color: white;
+
+  transform: translateY(-2px);
 }
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
+/* ================= TABLE SCROLL ================= */
+
+.table-card::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-card::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 10px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+
+  .user-container {
+    padding: 25px;
+  }
+
+  .header h2 {
+    font-size: 28px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .user-container {
+    padding: 18px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header h2 {
+    font-size: 24px;
+  }
+
+  .form-card,
+  .table-card {
+    padding: 18px;
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
 
   .primary-btn {
     grid-column: span 1;
+    width: 100%;
+  }
+
+  table {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .user-container {
+    padding: 12px;
+  }
+
+  .header h2 {
+    font-size: 21px;
+  }
+
+  .back-home {
+    width: 100%;
+    text-align: center;
+  }
+
+  .form-card,
+  .table-card {
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  .grid input,
+  .grid select {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .primary-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .edit-btn,
+  .delete-btn,
+  .password-btn {
+    width: 100%;
+  }
+
+  table {
+    min-width: 620px;
   }
 }

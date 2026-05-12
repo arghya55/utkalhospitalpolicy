@@ -1,488 +1,502 @@
-.home-container {
-  background-color: #c8e6c9;
-  padding: 20px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 14vh;
+/* ================= GLOBAL RESET ================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-/* Container to center the content */
-.home-container {
-  height: 14vh;
-  background-color: #a8c3a2; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+body{
+  font-family:Inter,sans-serif;
+  background:#f4f7f2;
+  overflow-x:hidden;
 }
 
-/* "Welcome" text */
-.home-header {
-  color: #2c3e50;
-  font-size: 32px;
-  font-weight: 800;
-  margin: 0;
-  line-height: 1.5;
+/* ================= HOME CONTAINER ================= */
+
+.home-container{
+  width:100%;
+  min-height:14vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #c8e6c9,
+      #a8c3a2
+    );
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  text-align:center;
+
+  padding:20px;
+
+  position:relative;
 }
 
-/* "to" text */
-.to-text {
-  color: #2c3e50;
-  font-size: 28px;
-  font-weight: 700;
+/* ================= HEADER TEXT ================= */
+
+.home-header{
+  color:#2c3e50;
+
+  font-size:clamp(22px,4vw,32px);
+
+  font-weight:800;
+
+  line-height:1.5;
 }
 
-/* "UTKAL TREE" text */
-.home-header1 {
-  color: #194e05;
-  font-size: 36px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  
+.to-text{
+  color:#2c3e50;
+
+  font-size:clamp(20px,3vw,28px);
+
+  font-weight:700;
 }
 
-.user-login-btn {
-  background-color: #396635;
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: bold;
-  height: 50px;
-  width: 150px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.home-header1{
+  color:#194e05;
+
+  font-size:clamp(26px,5vw,38px);
+
+  font-weight:900;
+
+  letter-spacing:2px;
 }
 
-.user-logout-btn {
-  background-color: #c62828;
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: bold;
-  height: 50px;
-  width: 150px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  position: absolute;
-  top: 20px;
-  right: 190px; /* Adjusted to be next to the login button */
+/* ================= LOGIN BUTTONS ================= */
+
+.user-login-btn,
+.user-logout-btn{
+  position:absolute;
+  top:20px;
+
+  height:48px;
+  min-width:140px;
+
+  padding:0 18px;
+
+  border:none;
+  border-radius:12px;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  cursor:pointer;
+
+  font-size:15px;
+  font-weight:700;
+
+  transition:0.3s ease;
+
+  color:white;
+
+  z-index:100;
 }
 
-.button-container {
-  display: flex;
-  justify-content: center;   /* center everything */
-  align-items: center;
-  gap: 40px;                 /* space between left + right */
+.user-login-btn{
+  right:20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #396635,
+      #2d5429
+    );
 }
 
-.side-button-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.user-login-btn:hover{
+  transform:translateY(-3px);
 }
 
-.policy-center {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: 800;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-  border: none;
-  cursor: pointer;
+.user-logout-btn{
+  right:180px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #c62828,
+      #991b1b
+    );
 }
 
-.policy-center:hover {
-  background-color: #AFC7A1;
+.user-logout-btn:hover{
+  transform:translateY(-3px);
 }
 
+/* ================= BUTTON AREA ================= */
 
-.hmis-btn {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: 800;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
+.button-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  gap:30px;
+
+  flex-wrap:wrap;
+
+  padding:20px;
 }
 
-.hmis-btn:hover {
-  background-color: #AFC7A1;
+/* ================= BUTTON GRID ================= */
+
+.button-column{
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+
+  gap:22px;
+
+  justify-items:center;
+
+  padding:20px;
 }
 
-.qms-btn {
-  background-color: #E3D1C1;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-}
-.qms-btn:hover {
-  background-color: #e4cba0;
+.department-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+
+  gap:20px;
+
+  padding:20px;
 }
 
-.website-btn {
-  background-color: #E3D1C1;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
+/* ================= COMMON BUTTON ================= */
+
+.policy-center,
+.hmis-btn,
+.qms-btn,
+.website-btn,
+.pacs-btn,
+.it-btn,
+.cssd-btn,
+.hr-btn,
+.finance-btn,
+.pharmacy-btn,
+.radiology-btn,
+.laboratory-btn,
+.maintenance-btn,
+.nursing-btn{
+  width:100%;
+  max-width:380px;
+
+  min-height:70px;
+
+  border:none;
+  border-radius:18px;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  text-align:center;
+
+  padding:14px 20px;
+
+  cursor:pointer;
+
+  text-decoration:none;
+
+  font-size:clamp(18px,2vw,28px);
+
+  font-weight:800;
+
+  transition:0.3s ease;
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.08);
 }
 
-.website-btn:hover {
-  background-color: #e4cba0;
+/* ================= GREEN BUTTONS ================= */
+
+.policy-center,
+.hmis-btn,
+.it-btn,
+.hr-btn,
+.radiology-btn,
+.maintenance-btn,
+.nursing-btn,
+.pacs-btn{
+  background:#BBD5AA;
+  color:#111827;
 }
 
-.pacs-btn {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
+.policy-center:hover,
+.hmis-btn:hover,
+.it-btn:hover,
+.hr-btn:hover,
+.radiology-btn:hover,
+.maintenance-btn:hover,
+.nursing-btn:hover,
+.pacs-btn:hover{
+  background:#AFC7A1;
+
+  transform:
+    translateY(-4px)
+    scale(1.02);
 }
 
-.pacs-btn:hover {
-  background-color: #AFC7A1;
+/* ================= BROWN BUTTONS ================= */
+
+.qms-btn,
+.website-btn,
+.cssd-btn,
+.finance-btn,
+.pharmacy-btn,
+.laboratory-btn{
+  background:#E3D1C1;
+  color:#111827;
 }
 
-/* .button-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-} */
+.qms-btn:hover,
+.website-btn:hover,
+.cssd-btn:hover,
+.finance-btn:hover,
+.pharmacy-btn:hover,
+.laboratory-btn:hover{
+  background:#e4cba0;
 
-.button-column {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 ta button per row */
-  gap: 20px; /* gap between buttons */
-  justify-items: center;
-  align-items: center;
-
+  transform:
+    translateY(-4px)
+    scale(1.02);
 }
 
-.department-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
+/* ================= POLICY PAGE ================= */
 
-}
+.policy-container{
+  width:100%;
 
-.it-btn {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 27px;
-  font-weight: 800;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-   border: none;
-   cursor: pointer;
+  min-height:100vh;
+
+  background:#e8f5e8;
+
+  padding:30px 20px;
+
+  text-align:center;
 }
 
-.it-btn:hover {
-  background-color: #AFC7A1;
+.policy-container h1{
+  font-size:clamp(24px,4vw,36px);
+
+  font-weight:800;
+
+  color:#333;
 }
 
-.cssd-btn {
-  background-color: #E3D1C1;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-  border: none;
-  cursor: pointer;
+/* ================= BACK BUTTON ================= */
 
-}
+.back-btn{
+  position:fixed;
 
-.cssd-btn:hover {
-  background-color: #e4cba0;
-}
-.hr-btn {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-  border: none;
-  cursor: pointer;
-}
-.hr-btn:hover {
-  background-color: #AFC7A1;
-}
-.finance-btn {
-  background-color: #E3D1C1;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-  border: none;
-  cursor: pointer;
-}
-.finance-btn:hover {
-  background-color: #e4cba0;
+  top:20px;
+  right:20px;
+
+  z-index:1000;
+
+  height:50px;
+  min-width:140px;
+
+  padding:0 18px;
+
+  border:none;
+  border-radius:12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #37c02b,
+      #2e7d32
+    );
+
+  color:white;
+
+  font-size:15px;
+  font-weight:700;
+
+  cursor:pointer;
+
+  transition:0.3s ease;
 }
 
-.pharmacy-btn {
-  background-color: #E3D1C1;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-  border: none;
-  cursor: pointer;
+.back-btn:hover{
+  transform:translateY(-3px);
 }
 
-.pharmacy-btn:hover {
-  background-color: #e4cba0;
+/* ================= POLICY GRID ================= */
+
+.policy-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fit,minmax(260px,1fr));
+
+  gap:24px;
+
+  margin-top:30px;
 }
 
-.radiology-btn {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 28px ;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-    border: none;
-    cursor: pointer;
+/* ================= POLICY CARD ================= */
+
+.policy-card{
+  background:white;
+
+  padding:22px;
+
+  border-radius:18px;
+
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.08);
+
+  transition:0.3s ease;
 }
 
-.radiology-btn:hover {
-  background-color: #AFC7A1;
+.policy-card:hover{
+  transform:
+    translateY(-5px);
 }
 
-.laboratory-btn {
-  background-color: #E3D1C1;
-  color: black;
-  text-decoration: none;
-  font-size: 28px ;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-    border: none;
-      cursor: pointer;
-}
-.laboratory-btn:hover {
-  background-color: #e4cba0;
-}
-.maintenance-btn {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 28px ;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-    border: none;
-      cursor: pointer;
-}
-.maintenance-btn:hover {
-  background-color: #AFC7A1;
+/* ================= FLOAT BUTTON ================= */
+
+.floating-btn{
+  position:fixed;
+
+  bottom:25px;
+  right:25px;
+
+  width:62px;
+  height:62px;
+
+  border:none;
+  border-radius:50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  color:white;
+
+  font-size:28px;
+
+  cursor:pointer;
+
+  z-index:999;
+
+  box-shadow:
+    0 10px 25px rgba(37,99,235,0.28);
+
+  transition:0.3s ease;
 }
 
-.nursing-btn {
-  background-color: #BBD5AA;
-  color: black;
-  text-decoration: none;
-  font-size: 28px;
-  font-weight: bold;
-  height: 70px;
-  width: 380px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px;
-    border: none;
-      cursor: pointer;
-}
-.nursing-btn:hover {
-  background-color: #AFC7A1;
+.floating-btn:hover{
+  transform:
+    scale(1.08)
+    translateY(-3px);
 }
 
-.policy-container {
-  background-color: #e8f5e8;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  width: 100%;
-  min-height: 50vh;
+/* ================= ADD POLICY FORM ================= */
+
+.add-policy-container{
+  width:95%;
+  max-width:520px;
+
+  margin:40px auto;
+
+  padding:28px;
+
+  background:white;
+
+  border-radius:18px;
+
+  box-shadow:
+    0 10px 24px rgba(0,0,0,0.08);
 }
 
-.policy-container h1 {
-  color: #333;
-  font-size: 32px;
-  font-weight: 800;
+.policy-form{
+  display:flex;
+  flex-direction:column;
+
+  gap:16px;
 }
 
-.back-btn {
-  background-color: #37c02b;
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: bold;
-  height: 50px;
-  width: 150px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
+/* ================= RESPONSIVE ================= */
 
-  /* Positioning */
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1000; /* Ensures it stays above other elements */
+@media(max-width:900px){
+
+  .user-login-btn{
+    right:15px;
+    top:15px;
+  }
+
+  .user-logout-btn{
+    right:15px;
+    top:75px;
+  }
+
+  .button-column{
+    grid-template-columns:1fr;
+  }
+
+  .button-container{
+    flex-direction:column;
+  }
 }
 
-/* POLICY GRID */
-.policy-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
+@media(max-width:600px){
 
-/* CARD */
-.policy-card {
-  background: #fff;
-  padding: 18px;
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  transition: 0.3s;
-}
+  .home-container{
+    padding-top:130px;
+    padding-bottom:30px;
+  }
 
-.policy-card:hover {
-  transform: translateY(-5px);
-}
+  .home-header{
+    line-height:1.4;
+  }
 
-/* FLOAT BUTTON */
-.floating-btn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #2563eb;
-  color: white;
-  font-size: 28px;
-  border: none;
-  cursor: pointer;
-}
+  .policy-grid{
+    grid-template-columns:1fr;
+  }
 
-/* FORM */
-.add-policy-container {
-  max-width: 500px;
-  margin: auto;
-  margin-top: 40px;
-  padding: 25px;
-  background: white;
-  border-radius: 12px;
-}
+  .policy-center,
+  .hmis-btn,
+  .qms-btn,
+  .website-btn,
+  .pacs-btn,
+  .it-btn,
+  .cssd-btn,
+  .hr-btn,
+  .finance-btn,
+  .pharmacy-btn,
+  .radiology-btn,
+  .laboratory-btn,
+  .maintenance-btn,
+  .nursing-btn{
+    max-width:100%;
+    min-height:64px;
 
-.policy-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+    font-size:18px;
+  }
+
+  .floating-btn{
+    width:56px;
+    height:56px;
+
+    font-size:24px;
+  }
+
+  .back-btn{
+    min-width:120px;
+    height:46px;
+
+    font-size:14px;
+  }
 }
