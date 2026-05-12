@@ -7,7 +7,7 @@ const fs = require("fs");
 
 const Media = require("../models/media");
 
-const auth = require("../middleware/auth");
+const auth = require("../Middleware/auth");
 
 // ================= MULTER STORAGE =================
 
