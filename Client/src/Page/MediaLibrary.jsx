@@ -13,11 +13,11 @@ import {
 
 import { api } from "../api";
 
-import MediaCard from "../component/MediaCard";
+import MediaCard from "../Component/MediaCard";
 
 import toast from "react-hot-toast";
 
-import "../style/media.css";
+import "../Style/media.css";
 
 const MediaLibrary = ({ deptId }) => {
 
