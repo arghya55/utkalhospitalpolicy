@@ -72,7 +72,7 @@ router.delete("/:id", async (req, res) => {
 // USER LOGIN
 router.post("/login", async (req, res) => {
   try {
-    const user = await User.findOne({ employeeId: req.body.employeeId });
+    const user = await User.findOne({ employeeId: req.body.employeeId }).populate("department");
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
@@ -87,7 +87,8 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        department: user.department,
+        name: user.name,
+        department: user.department._id,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
@@ -98,7 +99,8 @@ router.post("/login", async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
-        department: user.department,
+            department: user.department?._id,     
+    departmentName: user.department?.name,
         canAddPolicy: user.canAddPolicy,
       },
     });

@@ -5,7 +5,10 @@ import UserLogin from "./Component/UserLogin";
 import Policy from "./Policy/Policy";
 import DepartmentPage from "./Page/DepartmentPage";
 import AddPolicy from "./Page/AddPolicy";
+import AddSop from "./Page/Addsop";
 import Video from "./Video/Video";
+// import MediaPage from "./Page/MediaPage";
+import MediaLibrary from "./Page/MediaLibrary";
 
 function App() {
   const [page, setPage] = useState("home");
@@ -35,10 +38,28 @@ function App() {
         return;
       }
 
+        if (hash === "/page/addsop") {
+          setPage("addsop");
+          return;
+        }
+
       if (hash === "/video") {
         setPage("video");
         return;
       }
+
+   
+      if (hash.startsWith("/media/")) {
+
+  const id =
+    hash.split("/media/")[1];
+
+  setDeptId(id);
+
+  setPage("media");
+
+  return;
+}
 
       if (hash.startsWith("/department/")) {
         const id = hash.split("/department/")[1];
@@ -61,7 +82,12 @@ function App() {
       {page === "policy" && <Policy />}
       {page === "department" && <DepartmentPage deptId={deptId} />}
       {page === "addpolicy" && <AddPolicy />}
+      {page === "addsop" && <AddSop />}
       {page === "video" && <Video />}
+      
+   {page === "media" && (
+  <MediaLibrary deptId={deptId} />
+)}
     </>
   );
 }

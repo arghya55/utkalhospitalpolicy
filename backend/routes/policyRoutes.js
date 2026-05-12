@@ -61,32 +61,41 @@ router.get("/:id", async (req, res) => {
 
 
 // ================= UPDATE =================
-router.put("/:id", auth, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
-
-    if (!user?.canAddPolicy) {
-      return res.status(403).json({ message: "Not allowed" });
-    }
 
     const policy = await Policy.findById(req.params.id);
 
     if (!policy) {
-      return res.status(404).json({ message: "Policy not found" });
+      return res.status(404).json({
+        message: "Policy not found",
+      });
     }
 
-    if (policy.department.toString() !== user.department.toString()) {
-      return res.status(403).json({ message: "Wrong department" });
+    // update fields
+    if (req.body.title !== undefined) {
+      policy.title = req.body.title;
     }
 
-    policy.title = req.body.title;
-    policy.description = req.body.description;
+    if (req.body.description !== undefined) {
+      policy.description = req.body.description;
+    }
+
+    // 🔥 STATUS UPDATE
+    if (req.body.status !== undefined) {
+      policy.status = req.body.status;
+    }
 
     const updated = await policy.save();
+
     res.json(updated);
 
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.log(err);
+
+    res.status(500).json({
+      message: "Update failed",
+    });
   }
 });
 

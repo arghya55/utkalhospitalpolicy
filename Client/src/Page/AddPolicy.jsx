@@ -61,9 +61,14 @@ const AddPolicy = () => {
       // 🔥 notify department page
       window.dispatchEvent(new Event("policy-added"));
 
-      setTimeout(() => {
-        window.location.hash = `#/department/${user?.department}`;
-      }, 1200);
+   setTimeout(() => {
+  window.location.hash = `#/department/${user?.department}`;
+  
+  setTimeout(() => {
+    window.dispatchEvent(new Event("policy-added"));
+  }, 200);
+  
+}, 500);
 
     } catch (err) {
       console.log(err);

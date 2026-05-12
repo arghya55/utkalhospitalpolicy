@@ -3,11 +3,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+const path = require("path");
 const app = express();
 
-// ================= MIDDLEWARE =================
+// ================= MIDDLEWARE ================
 app.use(cors());
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 // ================= DEBUG MIDDLEWARE =================
 app.use((req, res, next) => {
@@ -22,6 +26,10 @@ const adminRoutes = require("./routes/adminRoutes");
 const departmentRoutes = require("./routes/departmentRoutes");
 const policyRoutes = require("./routes/policyRoutes");
 const usersRoutes = require("./routes/usersRoutes");
+const sopRoutes = require("./routes/sopRoutes");
+const mediaRoutes = require("./routes/mediaRoutes");
+
+
 // const userAuthRoutes = require("./routes/userAuth");
 
 
@@ -30,13 +38,34 @@ console.log("adminRoutes:", typeof adminRoutes);
 console.log("departmentRoutes:", typeof departmentRoutes);
 console.log("policyRoutes:", typeof policyRoutes);
 console.log("usersRoutes:", typeof usersRoutes);
+console.log("sopRoutes:", typeof sopRoutes);
+console.log("mediaRoutes:", typeof mediaRoutes);
 // console.log("userAuthRoutes:", typeof userAuthRoutes);
 
 // ================= ROUTES USE =================
 app.use("/api/admin", adminRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/policies", policyRoutes);
+app.use("/api/sops", sopRoutes);
 app.use("/api/users", usersRoutes);
+app.use(
+  "/api/media",
+  require("./routes/mediaRoutes")
+);
+app.use(
+  "/uploads",
+  express.static(
+    path.join(__dirname, "uploads")
+  )
+);
+app.use((err, req, res, next) => {
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return res.status(413).json({
+      message: "File too large! Max 50MB allowed",
+    });
+  }
+  next(err);
+});
 // app.use("/api/user", userAuthRoutes);
 
 // ================= DB CONNECT =================

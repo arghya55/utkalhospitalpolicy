@@ -1,16 +1,24 @@
 const mongoose = require("mongoose");
 
 const policySchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  date: { type: Date },
+
+  title: String,
+
+  description: String,
 
   department: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Department",
-    required: true
-  }
+  },
 
-}, { timestamps: true });
+  status: {
+    type: String,
+    enum: ["Active", "Inactive"],
+    default: "Active",
+  },
+
+}, {
+  timestamps: true,
+});
 
 module.exports = mongoose.model("Policy", policySchema);

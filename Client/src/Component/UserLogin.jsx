@@ -19,13 +19,14 @@ const UserLogin = () => {
       form
     );
 
-    console.log("LOGIN RESPONSE:", res.data);
+
 
     if (res.data.token) {
-      sessionStorage.setItem("token", res.data.token);
      sessionStorage.setItem("user", JSON.stringify(res.data.user));
+sessionStorage.setItem("token", res.data.token);
 
       console.log("TOKEN SAVED:", res.data.token);
+          console.log("LOGIN RESPONSE:", res.data);
 
       window.location.hash = "#/policy";
     } else {

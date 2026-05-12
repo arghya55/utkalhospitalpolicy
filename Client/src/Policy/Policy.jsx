@@ -5,6 +5,15 @@ import "./Policy.css";
 
 const Policy = () => {
   const [departments, setDepartments] = useState([]);
+    const [user, setUser] = useState(null); 
+
+      // ================= FETCH USER =================
+  useEffect(() => {
+  const storedUser = JSON.parse(sessionStorage.getItem("user")); // ✅ FIX
+  setUser(storedUser);
+}, []);
+
+  
 
   // ================= FETCH DEPARTMENTS =================
   useEffect(() => {
@@ -31,7 +40,11 @@ const Policy = () => {
         ← Home
       </button>
 
-      <h1>Departments</h1>
+      <div className="user-info">
+  <h3>Welcome: {user?.name}</h3>
+</div>
+
+      <h1>Department: {user?.departmentName}</h1>
 
       {/* 🔥 IMPORTANT WRAPPER */}
       <div className="department-buttons">

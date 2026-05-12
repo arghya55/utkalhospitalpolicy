@@ -17,12 +17,12 @@ const CreateUsers = () => {
 
   // ================= FETCH =================
   const fetchUsers = async () => {
-    const res = await axios.get("https://utkal-policy-backend.onrender.com");
+    const res = await axios.get("http://localhost:5000/api/users");
     setUsers(res.data);
   };
 
   const fetchDepartments = async () => {
-    const res = await axios.get("https://utkal-policy-backend.onrender.com");
+    const res = await axios.get("http://localhost:5000/api/departments");
     setDepartments(res.data);
   };
 
@@ -62,11 +62,11 @@ const CreateUsers = () => {
   }
 
   await axios.put(
-    `https://utkal-policy-backend.onrender.com/${editUser._id}`,
+    `http://localhost:5000/api/users/${editUser._id}`,
     updatedData
   );
 } else {
-  await axios.post("https://utkal-policy-backend.onrender.com", form);
+  await axios.post("http://localhost:5000/api/users", form);
 }
     setForm({
       name: "",
@@ -82,7 +82,7 @@ const CreateUsers = () => {
 
   // ================= DELETE =================
   const handleDelete = async (id) => {
-    await axios.delete(`https://utkal-policy-backend.onrender.com/${id}`);
+    await axios.delete(`http://localhost:5000/api/users/${id}`);
     fetchUsers();
   };
 
@@ -93,7 +93,7 @@ const handlePasswordUpdate = async (user) => {
 
   try {
     await axios.put(
-      `https://utkal-policy-backend.onrender.com/${user._id}`,
+      `http://localhost:5000/api/users/${user._id}`,
       { password: newPassword }
     );
 

@@ -1,0 +1,172 @@
+.tree-dashboard {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+}
+
+.tree-background {
+  width: 100%;
+  height: 100%;
+  background: url('../assets/utkaltreegimini.png') no-repeat center bottom;
+  background-size: contain;
+  position: relative;
+}
+
+/* Hanging system */
+.hanging-system {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.fruit-hook {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: top center;
+  animation: sway 4s ease-in-out infinite alternate,
+             float 3s ease-in-out infinite;
+}
+
+/* String */
+.fiber-string {
+  width: 2px;
+  height: 70px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.9));
+  box-shadow: 0 0 8px rgba(255,255,255,0.6);
+}
+
+.fiber-string.glowing {
+  background: linear-gradient(to bottom, transparent, #fff9c4);
+  box-shadow: 0 0 15px #fff9c4;
+}
+
+/* Glass Button */
+.glass-fruit {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  padding: 14px 20px;
+  border-radius: 18px;
+
+  min-width: 120px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-decoration: none;
+  cursor: pointer;
+
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  transition: all 0.3s ease;
+}
+
+.glass-fruit:hover {
+  transform: scale(1.12);
+  background: rgba(255, 255, 255, 0.35);
+
+  box-shadow:
+    0 0 15px rgba(255,255,255,0.5),
+    0 0 30px rgba(255,255,255,0.3);
+}
+
+.glass-fruit.primary {
+  border: 2px solid #fff9c4;
+  box-shadow: 0 0 20px rgba(255, 249, 196, 0.4);
+}
+
+/* Icons & Text */
+.fruit-icon {
+  font-size: 1.8rem;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));
+}
+
+.fruit-label {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 3px 8px rgba(0,0,0,0.9);
+}
+
+/* Individual Colors */
+.hmis .glass-fruit {
+  background: rgba(255, 0, 80, 0.6);
+}
+
+.qms .glass-fruit {
+  background: rgba(128, 0, 255, 0.6);
+}
+
+.website .glass-fruit {
+  background: rgba(0, 140, 255, 0.6);
+}
+
+.pacs .glass-fruit {
+  background: rgba(0, 200, 100, 0.6);
+}
+
+.policy .glass-fruit {
+  background: rgba(255, 165, 0, 0.7);
+}
+
+/* Animations */
+@keyframes sway {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(3deg); }
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Watering */
+.watering-area {
+  position: absolute;
+  bottom: 80px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.water-btn {
+  background: rgba(46, 125, 50, 0.9);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+.rain-drops {
+  position: absolute;
+  top: -200px;
+  font-size: 2rem;
+  animation: fall 1s linear infinite;
+}
+
+@keyframes fall {
+  to { transform: translateY(200px); opacity: 0; }
+}
+
+/* Footer */
+.footer-tagline {
+  position: absolute;
+  bottom: 30px;
+  width: 100%;
+  text-align: center;
+  color: rgb(217, 255, 0);
+  letter-spacing: 2px;
+  font-weight: bold;
+  font-size: 20px;
+}

@@ -26,9 +26,9 @@ const Dashboard = () => {
   // ================= FETCH =================
   useEffect(() => {
     const fetchData = async () => {
-      const users = await axios.get("https://utkal-policy-backend.onrender.com");
-      const departments = await axios.get("https://utkal-policy-backend.onrender.com");
-      const policies = await axios.get("https://utkal-policy-backend.onrender.com");
+      const users = await axios.get("http://localhost:5000/api/users");
+      const departments = await axios.get("http://localhost:5000/api/departments");
+      const policies = await axios.get("http://localhost:5000/api/policies");
 
       setStats({
         users: users.data.length,
