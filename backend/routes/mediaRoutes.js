@@ -5,7 +5,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const Media = require("../models/Media");
+const Media = require("../models/media");
 
 const auth = require("../middleware/auth");
 
