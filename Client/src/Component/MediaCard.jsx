@@ -14,7 +14,7 @@ import "../Style/Media.css";
 
 // IMPORTANT
 const BACKEND_URL =
-  "http://localhost:5000";
+  "https://utkalpolicybackend.onrender.com",
 
 const MediaCard = ({
   media,
