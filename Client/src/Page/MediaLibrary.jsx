@@ -17,7 +17,7 @@ import MediaCard from "../Component/MediaCard";
 
 import toast from "react-hot-toast";
 
-import "../Style/media.css";
+import "../Style/Media.css";
 
 const MediaLibrary = ({ deptId }) => {
 

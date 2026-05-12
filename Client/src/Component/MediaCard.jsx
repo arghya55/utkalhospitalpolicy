@@ -10,7 +10,7 @@ import {
   FaFilePowerpoint,
 } from "react-icons/fa";
 
-import "../style/media.css";
+import "../Style/Media.css";
 
 // IMPORTANT
 const BACKEND_URL =
