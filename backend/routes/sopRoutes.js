@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const Sop = require("../models/sop");
-const auth = require("../middleware/auth");
+const auth = require("../Middleware/auth");
 
 
 // ================= CREATE SOP =================
