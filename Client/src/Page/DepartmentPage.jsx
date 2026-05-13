@@ -7,7 +7,9 @@ const DepartmentPage = ({ deptId }) => {
   const [department, setDepartment] = useState(null);
   const [policies, setPolicies] = useState([]);
   const [sops, setSops] = useState([]);
-  const [filterType, setFilterType] = useState("All");
+  const [user, setUser] = useState(null);
+  
+  const [filterType, setFilterType] = useState("Policy");
 
   // POLICY MODAL
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +19,13 @@ const DepartmentPage = ({ deptId }) => {
   const [showSopModal, setShowSopModal] = useState(false);
   const [editSop, setEditSop] = useState(null);
 
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  // const user = JSON.parse(sessionStorage.getItem("user"));
+
+    // ================= FETCH USER =================
+  useEffect(() => {
+    const storedUser = JSON.parse(sessionStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
 
   // ================= FETCH =================
   useEffect(() => {
@@ -275,29 +283,49 @@ const visibleSops = canManage
 
   </div>
 
+  {/* CENTER */}
+  <div className="welcome-section">
+
+    <h1 className="dept-name">
+      Welcome to Utkal Tree
+      {user?.name ? ` : ${user.name}` : ""}
+    </h1>
+
+    <h3 className="dept-subtitle">
+      We are glad to have you in the{" "}
+      <span className="deptname">{department?.name}</span> Department
+    </h3>
+
+  </div>
+
   {/* RIGHT SIDE */}
   <div className="nav-right">
 
     {/* FILTER */}
     <div className="filter-box">
 
-  <h4 className="catagory">
-    Category
-  </h4>
+      <h4 className="catagory">
+        Select Category
+      </h4>
 
-  <select
-    value={filterType}
-    onChange={(e) =>
-      setFilterType(e.target.value)
-    }
-    className="filter-dropdown"
-  >
-    <option value="All">All</option>
-    <option value="Policy">Policy</option>
-    <option value="SOP">SOP</option>
-  </select>
+      <select
+        value={filterType}
+        onChange={(e) =>
+          setFilterType(e.target.value)
+        }
+        className="filter-dropdown"
+      >
+        <option value="Policy">
+          Policy
+        </option>
 
-</div>
+        <option value="SOP">
+          SOP
+        </option>
+
+      </select>
+
+    </div>
 
     {/* MEDIA UPLOAD */}
     {canManage && (
@@ -342,8 +370,6 @@ const visibleSops = canManage
     )}
 
   </div>
-
-    <h1 className="dept-name">Department: {department?.name}</h1>
 
 </div>
 
@@ -433,7 +459,10 @@ const visibleSops = canManage
       )}
 
       {/* ================= SOPS ================= */}
-      {visibleSops && visibleSops.length > 0  && (
+      {(filterType === "All" ||
+  filterType === "SOP") &&
+  visibleSops &&
+  visibleSops.length > 0 && (
 
         <div className="policy-grid">
 

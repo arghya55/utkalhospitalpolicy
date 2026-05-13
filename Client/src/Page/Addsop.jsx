@@ -87,7 +87,7 @@ const AddSop = () => {
   return (
     <div className="add-sop-container">
 
-      <button className="back-btn" onClick={handleBack}>
+      <button className="backbtn-sop" onClick={handleBack}>
         ← Back
       </button>
 

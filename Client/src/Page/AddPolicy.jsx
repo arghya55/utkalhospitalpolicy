@@ -85,7 +85,7 @@ const AddPolicy = () => {
   return (
     <div className="add-policy-container">
 
-      <button className="back-btn" onClick={handleBack}>
+      <button className="backbtn-policy" onClick={handleBack}>
         ← Back
       </button>
 

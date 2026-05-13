@@ -19,6 +19,7 @@ const Dashboard = () => {
     users: 0,
     departments: 0,
     policies: 0,
+    sops: 0,
   });
 
   const [chartData, setChartData] = useState([]);
@@ -29,11 +30,13 @@ const Dashboard = () => {
       const users = await axios.get("/users");
       const departments = await axios.get("/departments");
       const policies = await axios.get("/policies");
+      const sops = await axios.get("/sops");
 
       setStats({
         users: users.data.length,
         departments: departments.data.length,
         policies: policies.data.length,
+        sops: sops.data.length,
       });
 
       // Example chart data
@@ -41,6 +44,7 @@ const Dashboard = () => {
         { name: "Users", value: users.data.length },
         { name: "Departments", value: departments.data.length },
         { name: "Policies", value: policies.data.length },
+        { name: "SOPs", value: sops.data.length },
       ]);
     };
 
@@ -71,6 +75,11 @@ const Dashboard = () => {
           <div className="stat-card">
             <h3>Policies</h3>
             <p>{stats.policies}</p>
+          </div>
+
+          <div className="stat-card">
+            <h3>SOPs</h3>
+            <p>{stats.sops}</p>
           </div>
         </div>
 

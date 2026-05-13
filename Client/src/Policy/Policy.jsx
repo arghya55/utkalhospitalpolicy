@@ -41,10 +41,13 @@ const Policy = () => {
       </button>
 
       <div className="user-info">
-  <h3>Welcome: {user?.name}</h3>
+ <h3>
+  Welcome To Utkal Tree
+  {user?.name ? ` : ${user.name}` : ""}
+</h3>
 </div>
 
-      <h1>Department: {user?.departmentName}</h1>
+      <h1><b>Please Select Your Department</b></h1>
 
       {/* 🔥 IMPORTANT WRAPPER */}
       <div className="department-buttons">
