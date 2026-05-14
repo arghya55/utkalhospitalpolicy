@@ -1,65 +1,67 @@
-const Policy =
-  require("../models/Policy");
+const Policy = require("../models/Policy");
+const Sop = require("../models/sop");
 
-const Sop =
-  require("../models/sop");
-
-const {
-  askAI,
-} = require("../services/aiServices");
-
-const chatbot = async (
-  req,
-  res
-) => {
+const chatbot = async (req, res) => {
 
   try {
 
-    const { message } =
-      req.body;
+    const { message } = req.body;
 
-    if (!message) {
+    if (!message || !message.trim()) {
 
-      return res.status(400)
-      .json({
+      return res.status(400).json({
         success: false,
-        message:
-          "Message required",
+        answer: "Message required",
       });
     }
 
-    // GET DATA
+    // LOWERCASE SEARCH
+    const searchText =
+      message.trim().toLowerCase();
+
+    // GET ALL RECORDS
     const policies =
-      await Policy.find()
-      .limit(100);
+      await Policy.find({})
+      .populate("department", "name");
 
     const sops =
-      await Sop.find()
-      .limit(100);
+      await Sop.find({})
+      .populate("department", "name");
 
+    // MERGE ALL
     const allDocs = [
       ...policies,
       ...sops,
     ];
 
-    // SEARCH
+    console.log(
+      "TOTAL DOCS:",
+      allDocs.length
+    );
+
+    // FILTER MATCH
     const matchedDocs =
       allDocs.filter((doc) => {
 
-        const text = `
-          ${doc.title}
-          ${doc.description}
-        `.toLowerCase();
+        const title =
+          doc.title?.toLowerCase() || "";
 
-        return text.includes(
-          message.toLowerCase()
+        const description =
+          doc.description?.toLowerCase() || "";
+
+        return (
+          title.includes(searchText) ||
+          description.includes(searchText)
         );
       });
 
-    // NOTHING FOUND
-    if (
-      matchedDocs.length === 0
-    ) {
+    console.log(
+      "MATCHED:",
+      matchedDocs.length
+    );
+
+    // NO MATCH
+    if (matchedDocs.length === 0) {
 
       return res.json({
         success: true,
@@ -68,58 +70,22 @@ const chatbot = async (
       });
     }
 
-    // CONTEXT
-    const context =
-      matchedDocs.map(
-        (d, index) => `
+    // RESPONSE
+    const answer =
+      matchedDocs.map((doc, index) => `
 
-Document ${index + 1}
+${index + 1}. ${doc.title}
 
-Title:
-${d.title}
+${doc.description}
 
-Description:
-${d.description}
+Department:
+${doc.department?.name || "N/A"}
 
-`
-      ).join("\n");
+`).join("\n");
 
-    // TRY AI
-    let aiAnswer;
-
-    try {
-
-      const prompt = `
-
-You are a hospital SOP assistant.
-
-Answer professionally
-using ONLY hospital records.
-
-Hospital Records:
-${context}
-
-User Question:
-${message}
-
-`;
-
-      aiAnswer =
-        await askAI(prompt);
-
-    } catch (err) {
-
-      console.log(
-        "AI FAILED"
-      );
-
-      aiAnswer = context;
-    }
-
-    // FINAL RESPONSE
     return res.json({
       success: true,
-      answer: aiAnswer,
+      answer,
     });
 
   } catch (error) {
@@ -129,11 +95,10 @@ ${message}
       error
     );
 
-    return res.status(500)
-    .json({
+    return res.status(500).json({
       success: false,
-      message:
-        "Server error",
+      answer: "Server error",
+      error: error.message,
     });
   }
 };
