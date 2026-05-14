@@ -8,80 +8,70 @@ const {
   askAI,
 } = require("../services/aiServices");
 
-// NORMALIZE TEXT
-const normalizeText = (text) => {
-
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s]/gi, "");
-};
-
-const chatbot = async (req, res) => {
+const chatbot = async (
+  req,
+  res
+) => {
 
   try {
 
-    const { message } = req.body;
+    const { message } =
+      req.body;
 
     if (!message) {
 
-      return res.status(400).json({
+      return res.status(400)
+      .json({
         success: false,
-        message: "Message required",
+        message:
+          "Message required",
       });
     }
 
-    const normalizedMessage =
-      normalizeText(message);
-
-    // GET RECORDS
+    // GET DATA
     const policies =
-      await Policy.find({
-        status: "Active",
-      }).limit(30);
+      await Policy.find()
+      .limit(100);
 
     const sops =
-      await Sop.find({
-        status: "Active",
-      }).limit(30);
+      await Sop.find()
+      .limit(100);
 
     const allDocs = [
       ...policies,
       ...sops,
     ];
 
-    // SMART SEARCH
+    // SEARCH
     const matchedDocs =
       allDocs.filter((doc) => {
 
-        const combinedText =
-          normalizeText(
-            `
-            ${doc.title || ""}
-            ${doc.description || ""}
-            `
-          );
+        const text = `
+          ${doc.title}
+          ${doc.description}
+        `.toLowerCase();
 
-        return normalizedMessage
-          .split(" ")
-          .every((word) =>
-            combinedText.includes(word)
-          );
+        return text.includes(
+          message.toLowerCase()
+        );
       });
 
-    // NO MATCH
-    if (matchedDocs.length === 0) {
+    // NOTHING FOUND
+    if (
+      matchedDocs.length === 0
+    ) {
 
       return res.json({
         success: true,
         answer:
-          "Information not available in hospital records.",
+          "Policy/SOP not found in hospital records.",
       });
     }
 
     // CONTEXT
     const context =
-      matchedDocs.map((d, index) => `
+      matchedDocs.map(
+        (d, index) => `
 
 Document ${index + 1}
 
@@ -89,22 +79,22 @@ Title:
 ${d.title}
 
 Description:
-${(d.description || "").slice(0, 400)}
+${d.description}
 
-`).join("\n");
+`
+      ).join("\n");
 
-    // AI PROMPT
-    const prompt = `
+    // TRY AI
+    let aiAnswer;
 
-You are Utkal Hospital AI SOP Assistant.
+    try {
 
-Rules:
+      const prompt = `
 
-1. Answer ONLY from hospital records.
-2. Keep answer short and professional.
-3. Mention SOP/Policy title.
-4. If not found say:
-"Information not available in hospital records."
+You are a hospital SOP assistant.
+
+Answer professionally
+using ONLY hospital records.
 
 Hospital Records:
 ${context}
@@ -114,11 +104,19 @@ ${message}
 
 `;
 
-    // GEMINI
-    const aiAnswer =
-    //   await askAI(prompt);
-    context;
+      aiAnswer =
+        await askAI(prompt);
 
+    } catch (err) {
+
+      console.log(
+        "AI FAILED"
+      );
+
+      aiAnswer = context;
+    }
+
+    // FINAL RESPONSE
     return res.json({
       success: true,
       answer: aiAnswer,
@@ -131,9 +129,11 @@ ${message}
       error
     );
 
-    return res.status(500).json({
+    return res.status(500)
+    .json({
       success: false,
-      message: error.message,
+      message:
+        "Server error",
     });
   }
 };
