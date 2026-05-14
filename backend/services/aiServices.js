@@ -2,10 +2,16 @@ const {
   GoogleGenerativeAI,
 } = require("@google/generative-ai");
 
+const apiKey =
+  process.env.GEMINI_API_KEY;
+
+console.log(
+  "GEMINI KEY EXISTS:",
+  !!apiKey
+);
+
 const genAI =
-  new GoogleGenerativeAI(
-    process.env.GEMINI_API_KEY
-  );
+  new GoogleGenerativeAI(apiKey);
 
 const askAI = async (prompt) => {
 
@@ -19,14 +25,18 @@ const askAI = async (prompt) => {
     const result =
       await model.generateContent(prompt);
 
-    return result.response.text();
+    const response =
+      result.response.text();
+
+    return response;
 
   } catch (error) {
 
     console.log(
-      "GEMINI ERROR:",
-      error.message
+      "🔥 GEMINI FULL ERROR:"
     );
+
+    console.log(error);
 
     return "AI service temporarily unavailable.";
   }
