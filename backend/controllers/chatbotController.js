@@ -15,9 +15,12 @@ const chatbot = async (req, res) => {
       });
     }
 
-    // LOWERCASE SEARCH
-    const searchText =
-      message.trim().toLowerCase();
+    // USER INPUT
+    const searchWords =
+      message
+        .toLowerCase()
+        .split(" ")
+        .filter(Boolean);
 
     // GET ALL RECORDS
     const policies =
@@ -28,7 +31,7 @@ const chatbot = async (req, res) => {
       await Sop.find({})
       .populate("department", "name");
 
-    // MERGE ALL
+    // MERGE
     const allDocs = [
       ...policies,
       ...sops,
@@ -39,28 +42,34 @@ const chatbot = async (req, res) => {
       allDocs.length
     );
 
-    // FILTER MATCH
+    // SMART FILTER
     const matchedDocs =
       allDocs.filter((doc) => {
 
         const title =
-          doc.title?.toLowerCase() || "";
+          (doc.title || "")
+          .toLowerCase();
 
         const description =
-          doc.description?.toLowerCase() || "";
+          (doc.description || "")
+          .toLowerCase();
 
-        return (
-          title.includes(searchText) ||
-          description.includes(searchText)
+        const combined =
+          `${title} ${description}`;
+
+        // MATCH ANY WORD
+        return searchWords.some(
+          (word) =>
+            combined.includes(word)
         );
       });
 
     console.log(
-      "MATCHED:",
+      "MATCHED DOCS:",
       matchedDocs.length
     );
 
-    // NO MATCH
+    // NOTHING FOUND
     if (matchedDocs.length === 0) {
 
       return res.json({
