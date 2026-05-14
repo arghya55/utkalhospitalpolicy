@@ -2,11 +2,6 @@ const {
   GoogleGenerativeAI,
 } = require("@google/generative-ai");
 
-console.log(
-  "GEMINI KEY:",
-  process.env.GEMINI_API_KEY
-);
-
 const genAI =
   new GoogleGenerativeAI(
     process.env.GEMINI_API_KEY
@@ -29,9 +24,21 @@ const askAI = async (prompt) => {
   } catch (error) {
 
     console.log(
-      "GEMINI ERROR =>",
-      error
+      "GEMINI ERROR:",
+      error.message
     );
+
+    if (
+      error.message.includes("API key")
+    ) {
+      return "Invalid Gemini API key.";
+    }
+
+    if (
+      error.message.includes("quota")
+    ) {
+      return "Gemini quota exceeded.";
+    }
 
     return "AI service temporarily unavailable.";
   }
