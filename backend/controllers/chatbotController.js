@@ -2,11 +2,11 @@ const Policy =
   require("../models/Policy");
 
 const Sop =
-  require("../models/Sop");
+  require("../models/sop");
 
 const {
   askAI,
-} = require("../services/aiService");
+} = require("../services/aiServices");
 
 // NORMALIZE TEXT
 const normalizeText = (text) => {
