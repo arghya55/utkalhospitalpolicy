@@ -1,7 +1,8 @@
 const Policy = require("../models/Policy");
 const Sop = require("../models/Sop");
 
-const { askAI } = require("../services/aiServices");
+const { askAI } =
+require("../services/aiServices");
 
 const chatbot = async (req, res) => {
 
@@ -17,85 +18,59 @@ const chatbot = async (req, res) => {
       });
     }
 
-    // SEARCH POLICIES
-    const policies = await Policy.find({
+    // GET ALL RECORDS
+    const policies =
+      await Policy.find().limit(100);
 
-      $or: [
+    const sops =
+      await Sop.find().limit(100);
 
-        {
-          title: {
-            $regex: message,
-            $options: "i",
-          },
-        },
-
-        {
-          description: {
-            $regex: message,
-            $options: "i",
-          },
-        },
-
-      ],
-
-    }).limit(5);
-
-    // SEARCH SOPS
-    const sops = await Sop.find({
-
-      $or: [
-
-        {
-          title: {
-            $regex: message,
-            $options: "i",
-          },
-        },
-
-        {
-          description: {
-            $regex: message,
-            $options: "i",
-          },
-        },
-
-      ],
-
-    }).limit(5);
-
-    // MERGE
-    const docs = [
+    // MERGE ALL
+    const allDocs = [
       ...policies,
       ...sops,
     ];
 
-    // NOTHING FOUND
-    if (docs.length === 0) {
+    // NOTHING
+    if (allDocs.length === 0) {
 
       return res.json({
         success: true,
         answer:
-          "Policy/SOP not found in hospital records.",
+          "No hospital SOP or policy records found.",
       });
     }
 
-    // CONTEXT
-    const context = docs.map((d, index) => `
+    // CREATE CONTEXT
+    const context = allDocs.map(
+      (d, index) => `
 
 Document ${index + 1}
 
-Title: ${d.title}
+Title:
+${d.title}
 
-Description: ${d.description}
+Description:
+${d.description}
 
-`).join("\n");
+`
+    ).join("\n");
 
-    // AI PROMPT
+    // AI SEARCH PROMPT
     const prompt = `
 
-You are a hospital SOP assistant.
+You are an AI hospital SOP assistant.
 
-Answer ONLY from the hospital records below.
+Your job is:
+
+1. Understand the user's meaning semantically.
+2. Find the most relevant SOP/policy from records.
+3. Even if exact keywords do not match,
+   try to understand intent.
+4. Answer ONLY from hospital records.
+5. If no relevant document exists,
+   say:
+   "Information not available in hospital records."
 
 Hospital Records:
 ${context}
@@ -105,8 +80,9 @@ ${message}
 
 `;
 
-    // GEMINI
-    const aiAnswer = await askAI(prompt);
+    // GEMINI RESPONSE
+    const aiAnswer =
+      await askAI(prompt);
 
     return res.json({
       success: true,
@@ -115,7 +91,10 @@ ${message}
 
   } catch (error) {
 
-    console.log("CHATBOT ERROR:", error);
+    console.log(
+      "CHATBOT ERROR:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
