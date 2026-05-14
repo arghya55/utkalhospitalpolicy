@@ -18,7 +18,6 @@ const sopSchema = new mongoose.Schema(
       required: true,
     },
 
-    // ✅ ACTIVE / INACTIVE
     status: {
       type: String,
       enum: ["Active", "Inactive"],
@@ -30,4 +29,6 @@ const sopSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Sop", sopSchema);
+module.exports =
+  mongoose.models.Sop ||
+  mongoose.model("Sop", sopSchema);

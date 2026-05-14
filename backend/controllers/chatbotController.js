@@ -1,7 +1,7 @@
 const Policy = require("../models/Policy");
 const Sop = require("../models/Sop");
 
-const { askAI } = require("../services/aiService");
+const { askAI } = require("../services/aiServices");
 
 const chatbot = async (req, res) => {
 
@@ -17,50 +17,59 @@ const chatbot = async (req, res) => {
       });
     }
 
-    // POLICY SEARCH
-    const policies =
-      await Policy.find({
-        $or: [
-          {
-            title: {
-              $regex: message,
-              $options: "i",
-            },
-          },
-          {
-            description: {
-              $regex: message,
-              $options: "i",
-            },
-          },
-        ],
-      }).limit(5);
+    // SEARCH POLICIES
+    const policies = await Policy.find({
 
-    // SOP SEARCH
-    const sops =
-      await Sop.find({
-        $or: [
-          {
-            title: {
-              $regex: message,
-              $options: "i",
-            },
-          },
-          {
-            description: {
-              $regex: message,
-              $options: "i",
-            },
-          },
-        ],
-      }).limit(5);
+      $or: [
 
-    // MERGE RESULTS
+        {
+          title: {
+            $regex: message,
+            $options: "i",
+          },
+        },
+
+        {
+          description: {
+            $regex: message,
+            $options: "i",
+          },
+        },
+
+      ],
+
+    }).limit(5);
+
+    // SEARCH SOPS
+    const sops = await Sop.find({
+
+      $or: [
+
+        {
+          title: {
+            $regex: message,
+            $options: "i",
+          },
+        },
+
+        {
+          description: {
+            $regex: message,
+            $options: "i",
+          },
+        },
+
+      ],
+
+    }).limit(5);
+
+    // MERGE
     const docs = [
       ...policies,
       ...sops,
     ];
 
+    // NOTHING FOUND
     if (docs.length === 0) {
 
       return res.json({
@@ -70,32 +79,34 @@ const chatbot = async (req, res) => {
       });
     }
 
-    const context = docs
-      .map(
-        (d, index) => `
+    // CONTEXT
+    const context = docs.map((d, index) => `
+
 Document ${index + 1}
 
 Title: ${d.title}
 
 Description: ${d.description}
-`
-      )
-      .join("\n");
 
+`).join("\n");
+
+    // AI PROMPT
     const prompt = `
-You are an official hospital SOP assistant.
 
-Answer ONLY from provided hospital records.
+You are a hospital SOP assistant.
+
+Answer ONLY from the hospital records below.
 
 Hospital Records:
 ${context}
 
 User Question:
 ${message}
+
 `;
 
-    const aiAnswer =
-      await askAI(prompt);
+    // GEMINI
+    const aiAnswer = await askAI(prompt);
 
     return res.json({
       success: true,
@@ -104,7 +115,7 @@ ${message}
 
   } catch (error) {
 
-    console.log(error);
+    console.log("CHATBOT ERROR:", error);
 
     return res.status(500).json({
       success: false,
