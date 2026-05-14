@@ -37,7 +37,8 @@ const AIChatbot = () => {
 
   }, [messages]);
 
-  // SEND MESSAGE
+  // ================= SEND MESSAGE =================
+
   const sendMessage = async () => {
 
     if (!input.trim()) return;
@@ -95,7 +96,8 @@ const AIChatbot = () => {
     }
   };
 
-  // VOICE INPUT
+  // ================= VOICE INPUT =================
+
   const startVoice = () => {
 
     const SpeechRecognition =
@@ -129,9 +131,8 @@ const AIChatbot = () => {
   };
 
   return (
-    <div
-      className="chatbot-container"
-    >
+
+    <div className="chatbot-container">
 
       <div className="chatbot-header">
         UtkalTree AI Assistant
@@ -141,11 +142,21 @@ const AIChatbot = () => {
 
         {messages.map(
           (msg, index) => (
+
             <div
               key={index}
               className={`message ${msg.type}`}
             >
-              {msg.text}
+
+              {msg.text
+                .split("\n")
+                .map((line, i) => (
+
+                  <p key={i}>
+                    {line}
+                  </p>
+              ))}
+
             </div>
           )
         )}
@@ -157,6 +168,7 @@ const AIChatbot = () => {
         )}
 
         <div ref={messagesEndRef} />
+
       </div>
 
       <div className="chatbot-input-area">
@@ -170,6 +182,7 @@ const AIChatbot = () => {
               e.target.value
             )
           }
+
           onKeyDown={(e) => {
 
             if (
@@ -191,7 +204,9 @@ const AIChatbot = () => {
         >
           Send
         </button>
+
       </div>
+
     </div>
   );
 };

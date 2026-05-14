@@ -7,7 +7,7 @@ const chatbot = async (req, res) => {
 
     const { message } = req.body;
 
-    if (!message || !message.trim()) {
+    if (!message) {
 
       return res.status(400).json({
         success: false,
@@ -15,14 +15,10 @@ const chatbot = async (req, res) => {
       });
     }
 
-    // USER INPUT
-    const searchWords =
-      message
-        .toLowerCase()
-        .split(" ")
-        .filter(Boolean);
+    const search =
+      message.toLowerCase();
 
-    // GET ALL RECORDS
+    // GET DATA
     const policies =
       await Policy.find({})
       .populate("department", "name");
@@ -31,70 +27,109 @@ const chatbot = async (req, res) => {
       await Sop.find({})
       .populate("department", "name");
 
-    // MERGE
-    const allDocs = [
-      ...policies,
-      ...sops,
-    ];
+    let results = [];
 
-    console.log(
-      "TOTAL DOCS:",
-      allDocs.length
-    );
+    // ================= POLICY SEARCH =================
 
-    // SMART FILTER
-    const matchedDocs =
-      allDocs.filter((doc) => {
+    if (search.includes("policy")) {
+
+      results = policies.filter((doc) => {
+
+        const department =
+          doc.department?.name
+            ?.toLowerCase() || "";
 
         const title =
-          (doc.title || "")
-          .toLowerCase();
+          doc.title?.toLowerCase() || "";
 
-        const description =
-          (doc.description || "")
-          .toLowerCase();
-
-        const combined =
-          `${title} ${description}`;
-
-        // MATCH ANY WORD
-        return searchWords.some(
-          (word) =>
-            combined.includes(word)
+        return (
+          search.includes(department) ||
+          title.includes(search.replace("policy", "").trim())
         );
       });
+    }
 
-    console.log(
-      "MATCHED DOCS:",
-      matchedDocs.length
-    );
+    // ================= SOP SEARCH =================
 
-    // NOTHING FOUND
-    if (matchedDocs.length === 0) {
+    else if (search.includes("sop")) {
+
+      results = sops.filter((doc) => {
+
+        const department =
+          doc.department?.name
+            ?.toLowerCase() || "";
+
+        const title =
+          doc.title?.toLowerCase() || "";
+
+        return (
+          search.includes(department) ||
+          title.includes(search.replace("sop", "").trim())
+        );
+      });
+    }
+
+    // ================= NORMAL SEARCH =================
+
+    else {
+
+      const allDocs = [
+        ...policies,
+        ...sops,
+      ];
+
+      results = allDocs.filter((doc) => {
+
+        const title =
+          doc.title?.toLowerCase() || "";
+
+        const description =
+          doc.description?.toLowerCase() || "";
+
+        const department =
+          doc.department?.name
+            ?.toLowerCase() || "";
+
+        return (
+          title.includes(search) ||
+          description.includes(search) ||
+          department.includes(search)
+        );
+      });
+    }
+
+    // ================= NO RESULT =================
+
+    if (results.length === 0) {
 
       return res.json({
         success: true,
         answer:
-          "Policy/SOP not found in hospital records.",
+          "No matching SOP or Policy found.",
       });
     }
 
-    // RESPONSE
-    const answer =
-      matchedDocs.map((doc, index) => `
+    // ================= FORMAT RESPONSE =================
+
+    const formatted =
+      results.map((doc, index) => `
 
 ${index + 1}. ${doc.title}
 
-${doc.description}
-
 Department:
 ${doc.department?.name || "N/A"}
+
+Description:
+${doc.description}
+
+Status:
+${doc.status}
 
 `).join("\n");
 
     return res.json({
       success: true,
-      answer,
+      answer: formatted,
     });
 
   } catch (error) {
@@ -107,7 +142,6 @@ ${doc.department?.name || "N/A"}
     return res.status(500).json({
       success: false,
       answer: "Server error",
-      error: error.message,
     });
   }
 };
