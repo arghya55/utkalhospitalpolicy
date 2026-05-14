@@ -1,5 +1,6 @@
 const Policy = require("../models/Policy");
 const Sop = require("../models/sop");
+const Department = require("../models/Department");
 
 const chatbot = async (req, res) => {
 
@@ -11,125 +12,197 @@ const chatbot = async (req, res) => {
 
       return res.status(400).json({
         success: false,
-        answer: "Message required",
+        message: "Message required",
       });
     }
 
-    const search =
+    const searchText =
       message.toLowerCase();
 
-    // GET DATA
-    const policies =
-      await Policy.find({})
-      .populate("department", "name");
+    // ================= FIND DEPARTMENT =================
 
-    const sops =
-      await Sop.find({})
-      .populate("department", "name");
-
-    let results = [];
-
-    // ================= POLICY SEARCH =================
-
-    if (search.includes("policy")) {
-
-      results = policies.filter((doc) => {
-
-        const department =
-          doc.department?.name
-            ?.toLowerCase() || "";
-
-        const title =
-          doc.title?.toLowerCase() || "";
-
-        return (
-          search.includes(department) ||
-          title.includes(search.replace("policy", "").trim())
-        );
+    const department =
+      await Department.findOne({
+        name: {
+          $regex: searchText,
+          $options: "i",
+        },
       });
-    }
 
-    // ================= SOP SEARCH =================
-
-    else if (search.includes("sop")) {
-
-      results = sops.filter((doc) => {
-
-        const department =
-          doc.department?.name
-            ?.toLowerCase() || "";
-
-        const title =
-          doc.title?.toLowerCase() || "";
-
-        return (
-          search.includes(department) ||
-          title.includes(search.replace("sop", "").trim())
-        );
-      });
-    }
-
-    // ================= NORMAL SEARCH =================
-
-    else {
-
-      const allDocs = [
-        ...policies,
-        ...sops,
-      ];
-
-      results = allDocs.filter((doc) => {
-
-        const title =
-          doc.title?.toLowerCase() || "";
-
-        const description =
-          doc.description?.toLowerCase() || "";
-
-        const department =
-          doc.department?.name
-            ?.toLowerCase() || "";
-
-        return (
-          title.includes(search) ||
-          description.includes(search) ||
-          department.includes(search)
-        );
-      });
-    }
-
-    // ================= NO RESULT =================
-
-    if (results.length === 0) {
+    if (!department) {
 
       return res.json({
         success: true,
         answer:
-          "No matching SOP or Policy found.",
+          "Department not found.",
       });
     }
 
-    // ================= FORMAT RESPONSE =================
+    // ================= CHECK TYPE =================
 
-    const formatted =
-      results.map((doc, index) => `
+    const isPolicySearch =
+      searchText.includes("policy");
 
-${index + 1}. ${doc.title}
+    const isSopSearch =
+      searchText.includes("sop");
 
-Department:
-${doc.department?.name || "N/A"}
+    let responseText = "";
 
-Description:
-${doc.description}
+    // ================= POLICY SEARCH =================
 
-Status:
-${doc.status}
+    if (isPolicySearch) {
 
-`).join("\n");
+      const policies =
+        await Policy.find({
+          department:
+            department._id,
+        });
+
+      if (
+        policies.length === 0
+      ) {
+
+        return res.json({
+          success: true,
+          answer:
+            "Policy not found.",
+        });
+      }
+
+      responseText =
+        `🏥 ${department.name} Department Policies\n\n`;
+
+      policies.forEach(
+        (policy, index) => {
+
+          responseText +=
+`
+${index + 1}. ${policy.title}
+
+${policy.description}
+
+`;
+        }
+      );
+    }
+
+    // ================= SOP SEARCH =================
+
+    else if (isSopSearch) {
+
+      const sops =
+        await Sop.find({
+          department:
+            department._id,
+        });
+
+      if (
+        sops.length === 0
+      ) {
+
+        return res.json({
+          success: true,
+          answer:
+            "SOP not found.",
+        });
+      }
+
+      responseText =
+        `🏥 ${department.name} Department SOPs\n\n`;
+
+      sops.forEach(
+        (sop, index) => {
+
+          responseText +=
+`
+${index + 1}. ${sop.title}
+
+${sop.description}
+
+`;
+        }
+      );
+    }
+
+    // ================= DEFAULT =================
+
+    else {
+
+      const policies =
+        await Policy.find({
+          department:
+            department._id,
+        });
+
+      const sops =
+        await Sop.find({
+          department:
+            department._id,
+        });
+
+      responseText =
+        `🏥 ${department.name} Department Records\n\n`;
+
+      // POLICIES
+
+      if (
+        policies.length > 0
+      ) {
+
+        responseText +=
+          `📘 POLICIES\n\n`;
+
+        policies.forEach(
+          (policy, index) => {
+
+            responseText +=
+`
+${index + 1}. ${policy.title}
+
+${policy.description}
+
+`;
+          }
+        );
+      }
+
+      // SOPS
+
+      if (
+        sops.length > 0
+      ) {
+
+        responseText +=
+`\n📗 SOPS\n\n`;
+
+        sops.forEach(
+          (sop, index) => {
+
+            responseText +=
+`
+${index + 1}. ${sop.title}
+
+${sop.description}
+
+`;
+          }
+        );
+      }
+
+      if (
+        policies.length === 0 &&
+        sops.length === 0
+      ) {
+
+        responseText =
+          "No records found.";
+      }
+    }
 
     return res.json({
       success: true,
-      answer: formatted,
+      answer:
+        responseText,
     });
 
   } catch (error) {
@@ -141,7 +214,8 @@ ${doc.status}
 
     return res.status(500).json({
       success: false,
-      answer: "Server error",
+      message:
+        "Server error",
     });
   }
 };
