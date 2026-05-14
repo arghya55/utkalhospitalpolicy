@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 // import axios from "axios";
 import { api } from "../api";
+import logo from "../assets/utkal-logo.png";
 import "./Policy.css";
 
 const Policy = () => {
@@ -42,10 +43,10 @@ const Policy = () => {
 
       <div className="user-info">
  <h3>
-  Welcome To Utkal Tree
-  {user?.name ? ` : ${user.name}` : ""}
+  Welcome To Utkal SOP / Policies
 </h3>
 </div>
+ <h1> {user?.name ? `  ${user.name}` : ""}</h1>
 
       <h1><b>Please Select Your Department</b></h1>
 

@@ -30,10 +30,37 @@ const MediaLibrary = ({ deptId }) => {
   const [category, setCategory] =
     useState("All");
 
-  const user =
-    JSON.parse(
-      sessionStorage.getItem("user")
-    );
+     const [user, setUser] = useState(null);
+       const [department, setDepartment] = useState(null);
+
+       useEffect(() => {
+           const storedUser = JSON.parse(sessionStorage.getItem("user"));
+           setUser(storedUser);
+         }, []);
+
+  useEffect(() => {
+     const storedDepartment = JSON.parse(sessionStorage.getItem("department"));
+           setDepartment(storedDepartment);
+          }, []);
+
+           const fetchDepartment = async () => {
+              try {
+                const res = await api.get("/departments");
+          
+                const found = res.data.find(
+                  (d) => d._id === deptId
+                );
+          
+                setDepartment(found);
+          
+              } catch (err) {
+                console.log(err);
+              }
+            };
+
+  useEffect(() => {
+    fetchDepartment();
+  }, [deptId]);
 
   // ================= FETCH =================
 
@@ -85,6 +112,9 @@ const MediaLibrary = ({ deptId }) => {
     });
 
   // ================= VISIBLE MEDIA =================
+const isDepartmentUser =
+  user?.role?.toLowerCase() ===
+  "department";
 
   const visibleMedia =
     filteredMedia.filter((m) => {
@@ -206,7 +236,6 @@ const MediaLibrary = ({ deptId }) => {
       <main className="content">
 
         {/* ================= NAVBAR ================= */}
-{/* ================= NAVBAR ================= */}
 
 <div className="top-navbar">
 
@@ -233,12 +262,12 @@ const MediaLibrary = ({ deptId }) => {
 
     <div className="navbar-heading">
 
-      <h2 className="navbar-title">
-        Media Library
-      </h2>
-
+    <h1 className="navbar-title">
+      Welcome to {department?.name || "Department"} Media Library
+      {user?.name ? ` : ${user.name}` : ""}
+    </h1>
       <p className="navbar-subtitle">
-        Department Media Files
+         The {department?.name || "Department"} Department sincerely thanks you for reviewing the media files.
       </p>
 
     </div>

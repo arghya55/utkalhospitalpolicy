@@ -33,8 +33,22 @@
     0 10px 30px rgba(15,23,42,0.08);
 
   margin-bottom: 25px;
+  position: relative;
 }
 
+.dept-header img{
+  width: 400px;
+  height: 150px;
+
+  position: absolute;
+
+  right: 30px;
+  top: 40%;
+
+  transform: translateY(-50%);
+
+  object-fit: contain;
+}
 /* ================= LEFT ================= */
 
 .nav-left{

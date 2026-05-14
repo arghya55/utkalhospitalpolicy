@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import './UtkalTree.css'; // See the CSS file below
 // import treeImage from '../assets/utkal-tree.png'; // Make sure to add a tree image in this path
+import AIChatbot from "./AIChatbot";
 
 const Home = () => {
   const [user, setUser] = useState(null);
@@ -107,6 +108,15 @@ const Home = () => {
             <button className="glass-fruit" onClick={() => (window.location.hash = "#/policy")}>
               <span className="fruit-icon">📖</span>
               <span className="fruit-label">SOP/POLICY</span>
+            </button>
+          </div>
+
+          {/* Chatbot Button */}
+          <div className="fruit-hook chatbot" style={{ top: "35%", left: "85%" }}>
+            <div className="fiber-string"></div>
+            <button className="glass-fruit" onClick={() => (window.location.hash = "#/chatbot")}>
+              <span className="fruit-icon">🤖</span>
+              <span className="fruit-label">AI CHATBOT</span>
             </button>
           </div>
         </div>

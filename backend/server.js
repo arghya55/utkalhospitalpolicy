@@ -5,7 +5,6 @@ require("dotenv").config();
 
 const path = require("path");
 const app = express();
-
 // ================= MIDDLEWARE ================
 app.use(cors());
 
@@ -28,6 +27,8 @@ const policyRoutes = require("./routes/policyRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 const sopRoutes = require("./routes/sopRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
+const chatbotRoutes =
+  require("./routes/chatbotRoutes");
 
 
 // const userAuthRoutes = require("./routes/userAuth");
@@ -40,9 +41,11 @@ console.log("policyRoutes:", typeof policyRoutes);
 console.log("usersRoutes:", typeof usersRoutes);
 console.log("sopRoutes:", typeof sopRoutes);
 console.log("mediaRoutes:", typeof mediaRoutes);
+console.log("chatbotRoutes:", typeof chatbotRoutes);
 // console.log("userAuthRoutes:", typeof userAuthRoutes);
 
 // ================= ROUTES USE =================
+app.use("/api/chatbot", chatbotRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/departments", departmentRoutes);
 app.use("/api/policies", policyRoutes);

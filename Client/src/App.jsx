@@ -9,6 +9,7 @@ import AddSop from "./Page/Addsop";
 import Video from "./Video/Video";
 // import MediaPage from "./Page/MediaPage";
 import MediaLibrary from "./Page/MediaLibrary";
+import AIChatbot from "./Component/AIChatbot";
 
 function App() {
   const [page, setPage] = useState("home");
@@ -48,6 +49,11 @@ function App() {
         return;
       }
 
+      if (hash === "/chatbot") {
+        setPage("chatbot");
+        return;
+      }
+
    
       if (hash.startsWith("/media/")) {
 
@@ -84,7 +90,7 @@ function App() {
       {page === "addpolicy" && <AddPolicy />}
       {page === "addsop" && <AddSop />}
       {page === "video" && <Video />}
-      
+      {page === "chatbot" && <AIChatbot />}
    {page === "media" && (
   <MediaLibrary deptId={deptId} />
 )}

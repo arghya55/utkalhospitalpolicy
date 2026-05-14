@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api";
 import MediaUpload from "../Component/MediaUpload";
+import logo from "../assets/utkal-logo.png";
 import "./DepartmentPage.css";
 
 const DepartmentPage = ({ deptId }) => {
@@ -268,6 +269,8 @@ const visibleSops = canManage
 
 <div className="dept-header">
 
+  <img src={logo} alt="logo" />
+
   {/* LEFT SIDE */}
   <div className="nav-left">
 
@@ -287,7 +290,7 @@ const visibleSops = canManage
   <div className="welcome-section">
 
     <h1 className="dept-name">
-      Welcome to Utkal Tree
+      SOP/Policy of {department?.name || "Department"}
       {user?.name ? ` : ${user.name}` : ""}
     </h1>
 
