@@ -1,8 +1,21 @@
-const Policy = require("../models/Policy");
-const Sop = require("../models/sop");
+const Policy =
+  require("../models/Policy");
 
-const { askAI } =
-require("../services/aiServices");
+const Sop =
+  require("../models/Sop");
+
+const {
+  askAI,
+} = require("../services/aiService");
+
+// NORMALIZE TEXT
+const normalizeText = (text) => {
+
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s]/gi, "");
+};
 
 const chatbot = async (req, res) => {
 
@@ -18,32 +31,57 @@ const chatbot = async (req, res) => {
       });
     }
 
-    // GET ALL RECORDS
+    const normalizedMessage =
+      normalizeText(message);
+
+    // GET RECORDS
     const policies =
-      await Policy.find().limit(100);
+      await Policy.find({
+        status: "Active",
+      }).limit(30);
 
     const sops =
-      await Sop.find().limit(100);
+      await Sop.find({
+        status: "Active",
+      }).limit(30);
 
-    // MERGE ALL
     const allDocs = [
       ...policies,
       ...sops,
     ];
 
-    // NOTHING
-    if (allDocs.length === 0) {
+    // SMART SEARCH
+    const matchedDocs =
+      allDocs.filter((doc) => {
+
+        const combinedText =
+          normalizeText(
+            `
+            ${doc.title || ""}
+            ${doc.description || ""}
+            `
+          );
+
+        return normalizedMessage
+          .split(" ")
+          .every((word) =>
+            combinedText.includes(word)
+          );
+      });
+
+    // NO MATCH
+    if (matchedDocs.length === 0) {
 
       return res.json({
         success: true,
         answer:
-          "No hospital SOP or policy records found.",
+          "Information not available in hospital records.",
       });
     }
 
-    // CREATE CONTEXT
-    const context = allDocs.map(
-      (d, index) => `
+    // CONTEXT
+    const context =
+      matchedDocs.map((d, index) => `
 
 Document ${index + 1}
 
@@ -51,26 +89,22 @@ Title:
 ${d.title}
 
 Description:
-${d.description}
+${(d.description || "").slice(0, 400)}
 
-`
-    ).join("\n");
+`).join("\n");
 
-    // AI SEARCH PROMPT
+    // AI PROMPT
     const prompt = `
 
-You are an AI hospital SOP assistant.
+You are Utkal Hospital AI SOP Assistant.
 
-Your job is:
+Rules:
 
-1. Understand the user's meaning semantically.
-2. Find the most relevant SOP/policy from records.
-3. Even if exact keywords do not match,
-   try to understand intent.
-4. Answer ONLY from hospital records.
-5. If no relevant document exists,
-   say:
-   "Information not available in hospital records."
+1. Answer ONLY from hospital records.
+2. Keep answer short and professional.
+3. Mention SOP/Policy title.
+4. If not found say:
+"Information not available in hospital records."
 
 Hospital Records:
 ${context}
@@ -80,7 +114,7 @@ ${message}
 
 `;
 
-    // GEMINI RESPONSE
+    // GEMINI
     const aiAnswer =
       await askAI(prompt);
 
