@@ -116,7 +116,8 @@ ${message}
 
     // GEMINI
     const aiAnswer =
-      await askAI(prompt);
+    //   await askAI(prompt);
+    context;
 
     return res.json({
       success: true,
