@@ -11,11 +11,6 @@ const askAI = async (prompt) => {
 
   try {
 
-    console.log(
-      "GEMINI API KEY:",
-      process.env.GEMINI_API_KEY
-    );
-
     const model =
       genAI.getGenerativeModel({
         model: "gemini-1.5-flash",
@@ -24,29 +19,14 @@ const askAI = async (prompt) => {
     const result =
       await model.generateContent(prompt);
 
-    const text =
-      result.response.text();
-
-    console.log(
-      "GEMINI RESPONSE:",
-      text
-    );
-
-    return text;
+    return result.response.text();
 
   } catch (error) {
 
     console.log(
-      "FULL GEMINI ERROR:"
+      "GEMINI ERROR:",
+      error.message
     );
-
-    console.log(error);
-
-    if (error.response) {
-      console.log(
-        error.response.data
-      );
-    }
 
     return "AI service temporarily unavailable.";
   }
