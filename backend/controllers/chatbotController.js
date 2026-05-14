@@ -19,25 +19,26 @@ const chatbot = async (req, res) => {
     const searchText =
       message.toLowerCase();
 
-    // ================= FIND DEPARTMENT =================
+    const raw = message.toLowerCase();
 
-    const department =
-      await Department.findOne({
-        name: {
-          $regex: searchText,
-          $options: "i",
-        },
-      });
+// extract department keyword only
+let deptKeyword = null;
 
-    if (!department) {
+if (raw.includes("it")) deptKeyword = "IT";
+else if (raw.includes("nursing")) deptKeyword = "NURSING";
+else if (raw.includes("hr")) deptKeyword = "HR";
 
-      return res.json({
-        success: true,
-        answer:
-          "Department not found.",
-      });
-    }
+// if no department found
+if (!deptKeyword) {
+  return res.json({
+    success: true,
+    answer: "Department not found.",
+  });
+}
 
+const department = await Department.findOne({
+  name: { $regex: new RegExp(`^${deptKeyword}$`, "i") }
+});
     // ================= CHECK TYPE =================
 
     const isPolicySearch =
