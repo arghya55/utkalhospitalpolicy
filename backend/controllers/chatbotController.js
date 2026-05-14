@@ -1,5 +1,7 @@
 const Policy = require("../models/Policy");
-const { askAI } = require("../services/aiServices");
+const Sop = require("../models/Sop");
+
+const { askAI } = require("../services/aiService");
 
 const chatbot = async (req, res) => {
 
@@ -8,28 +10,56 @@ const chatbot = async (req, res) => {
     const { message } = req.body;
 
     if (!message) {
+
       return res.status(400).json({
         success: false,
         message: "Message required",
       });
     }
 
-    const docs = await Policy.find({
-      $or: [
-        {
-          title: {
-            $regex: message,
-            $options: "i",
+    // POLICY SEARCH
+    const policies =
+      await Policy.find({
+        $or: [
+          {
+            title: {
+              $regex: message,
+              $options: "i",
+            },
           },
-        },
-        {
-          description: {
-            $regex: message,
-            $options: "i",
+          {
+            description: {
+              $regex: message,
+              $options: "i",
+            },
           },
-        },
-      ],
-    }).limit(5);
+        ],
+      }).limit(5);
+
+    // SOP SEARCH
+    const sops =
+      await Sop.find({
+        $or: [
+          {
+            title: {
+              $regex: message,
+              $options: "i",
+            },
+          },
+          {
+            description: {
+              $regex: message,
+              $options: "i",
+            },
+          },
+        ],
+      }).limit(5);
+
+    // MERGE RESULTS
+    const docs = [
+      ...policies,
+      ...sops,
+    ];
 
     if (docs.length === 0) {
 
@@ -44,7 +74,9 @@ const chatbot = async (req, res) => {
       .map(
         (d, index) => `
 Document ${index + 1}
+
 Title: ${d.title}
+
 Description: ${d.description}
 `
       )
