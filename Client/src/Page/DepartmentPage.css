@@ -260,10 +260,27 @@ margin-left: 60px;
 }
 
 .dept-name{
-  font-size:38px;
-  font-weight:800;
-  color:#1e293b;
-  margin-bottom: 50px;
+  .department-title {
+  width: 100%;
+
+  text-align: center;
+
+  font-size: clamp(28px, 3vw, 58px);
+
+  font-weight: 800;
+
+  color: #1b2740;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  padding: 0 20px;
+
+  box-sizing: border-box;
+}
 }
 
 /* ================= NAV RIGHT ================= */

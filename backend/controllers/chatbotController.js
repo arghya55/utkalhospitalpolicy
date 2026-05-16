@@ -27,8 +27,17 @@ const chatbot = async (req, res) => {
     const searchText =
       message.toLowerCase().trim();
 
-    const words =
-      searchText.split(" ");
+  const words =
+  searchText
+    .split(" ")
+    .filter(
+      (word) =>
+        word !== "policy" &&
+        word !== "policies" &&
+        word !== "sop" &&
+        word !== "sops" &&
+        word.trim() !== ""
+    );
 
     const isPolicySearch =
       searchText.includes("policy");
@@ -72,7 +81,8 @@ const exactPolicy =
         .trim();
 
     return (
-      title === searchText
+      title === searchText ||
+      title.includes(searchText)
     );
   });
 
@@ -104,7 +114,8 @@ const exactSop =
         .trim();
 
     return (
-      title === searchText
+      title === searchText ||
+      title.includes(searchText)
     );
   });
 
@@ -126,29 +137,41 @@ ${exactSop.description}
     // ======================================================
     // FIND DEPARTMENT
     // ======================================================
+for (const dept of departments) {
 
-    let department = null;
+  const deptName =
+    dept.name
+      .toLowerCase()
+      .trim();
 
-    for (const dept of departments) {
+  // FULL MATCH
 
-      const deptName =
-        dept.name.toLowerCase();
+  if (
+    cleanText.includes(deptName)
+  ) {
 
-      const deptWords =
-        deptName.split(" ");
+    department = dept;
 
-      const matched =
-        deptWords.some((word) =>
-          cleanText.includes(word)
-        );
+    break;
+  }
 
-      if (matched) {
+  // WORD MATCH
 
-        department = dept;
+  const deptWords =
+    deptName.split(" ");
 
-        break;
-      }
-    }
+  const matched =
+    deptWords.some((word) =>
+      cleanText.includes(word)
+    );
+
+  if (matched) {
+
+    department = dept;
+
+    break;
+  }
+}
 
     // ======================================================
     // POLICY TITLE SEARCH
