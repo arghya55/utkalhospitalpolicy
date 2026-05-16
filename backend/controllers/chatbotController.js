@@ -1,5 +1,5 @@
 const Policy = require("../models/Policy");
-const Sop = require("../models/Sop");
+const Sop = require("../models/sop");
 const Department = require("../models/Department");
 
 // ======================================================
