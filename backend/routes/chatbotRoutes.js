@@ -5,6 +5,7 @@ const router = express.Router();
 const {
   chatbot,
   getSuggestions,
+  getPopupMessages
 } = require("../controllers/chatbotController");
 
 router.post(
