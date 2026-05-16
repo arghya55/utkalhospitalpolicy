@@ -58,6 +58,71 @@ const chatbot = async (req, res) => {
       await Sop.find()
         .populate("department");
 
+
+        // ======================================================
+// EXACT POLICY TITLE SEARCH
+// ======================================================
+
+const exactPolicy =
+  allPolicies.find((policy) => {
+
+    const title =
+      policy.title
+        .toLowerCase()
+        .trim();
+
+    return (
+      title === searchText
+    );
+  });
+
+if (exactPolicy) {
+
+  return res.json({
+    success: true,
+
+    answer:
+`🏥 ${exactPolicy.department?.name?.toUpperCase()} DEPARTMENT POLICY
+
+📘 ${exactPolicy.title}
+
+${exactPolicy.description}
+`,
+  });
+}
+
+// ======================================================
+// EXACT SOP TITLE SEARCH
+// ======================================================
+
+const exactSop =
+  allSops.find((sop) => {
+
+    const title =
+      sop.title
+        .toLowerCase()
+        .trim();
+
+    return (
+      title === searchText
+    );
+  });
+
+if (exactSop) {
+
+  return res.json({
+    success: true,
+
+    answer:
+`🏥 ${exactSop.department?.name?.toUpperCase()} DEPARTMENT SOP
+
+📗 ${exactSop.title}
+
+${exactSop.description}
+`,
+  });
+}
+
     // ======================================================
     // FIND DEPARTMENT
     // ======================================================
