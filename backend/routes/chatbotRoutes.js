@@ -16,5 +16,9 @@ router.get(
   "/suggestions",
   getSuggestions
 );
+router.get(
+  "/popup-messages",
+  getPopupMessages
+);
 
 module.exports = router;

@@ -11,13 +11,7 @@ import "./AIChatbot.css";
 const AIChatbot = () => {
 
   const [messages, setMessages] =
-    useState([
-      {
-        type: "bot",
-        text:
-          "Hello! Ask me about SOP or Policies.",
-      },
-    ]);
+    useState([]);
 
   const [input, setInput] =
     useState("");
@@ -28,12 +22,23 @@ const AIChatbot = () => {
   const [suggestions, setSuggestions] =
     useState([]);
 
+  const [popupText, setPopupText] =
+    useState("");
+
+  const [showPopup, setShowPopup] =
+    useState(true);
+
+  const [messageIndex, setMessageIndex] =
+    useState(0);
+    const [popupMessages, setPopupMessages] =
+  useState([]);
+
   const messagesEndRef =
     useRef(null);
 
-  // ==================================================
+  // =========================================
   // AUTO SCROLL
-  // ==================================================
+  // =========================================
 
   useEffect(() => {
 
@@ -44,9 +49,127 @@ const AIChatbot = () => {
 
   }, [messages]);
 
-  // ==================================================
+  // =========================================
+// LOAD POPUP MESSAGES
+// =========================================
+
+useEffect(() => {
+
+  const fetchPopupMessages =
+    async () => {
+
+      try {
+
+        const res =
+          await api.get(
+            "/chatbot/popup-messages"
+          );
+
+        setPopupMessages(
+          res.data
+        );
+
+      } catch (error) {
+
+        console.log(error);
+      }
+    };
+
+  fetchPopupMessages();
+
+}, []);
+
+  // =========================================
+  // PREMIUM AI POPUP
+  // =========================================
+
+  useEffect(() => {
+
+    let typingInterval;
+
+    let hideTimeout;
+
+    let nextTimeout;
+
+    const currentText =
+
+  popupMessages.length > 0
+
+    ? popupMessages[
+        messageIndex %
+        popupMessages.length
+      ]
+
+    : "⌨️ Search Your All Departments Policies and Sops Data...";
+
+    let charIndex = 0;
+
+    setPopupText("");
+
+    setShowPopup(true);
+
+    typingInterval =
+      setInterval(() => {
+
+        setPopupText(
+          currentText.slice(
+            0,
+            charIndex + 1
+          )
+        );
+
+        charIndex++;
+
+        if (
+          charIndex >=
+          currentText.length
+        ) {
+
+          clearInterval(
+            typingInterval
+          );
+
+          hideTimeout =
+            setTimeout(() => {
+
+              setShowPopup(false);
+
+            }, 3500);
+
+          nextTimeout =
+            setTimeout(() => {
+
+              setMessageIndex(
+                (prev) =>
+                  (prev + 1) %
+                  popupMessages.length
+              );
+
+            }, 7000);
+        }
+
+      }, 35);
+
+    return () => {
+
+      clearInterval(
+        typingInterval
+      );
+
+      clearTimeout(
+        hideTimeout
+      );
+
+      clearTimeout(
+        nextTimeout
+      );
+    };
+
+  }, [messageIndex, input]);
+
+  // =========================================
   // LOAD SUGGESTIONS
-  // ==================================================
+  // =========================================
 
   useEffect(() => {
 
@@ -81,9 +204,9 @@ const AIChatbot = () => {
 
   }, [input]);
 
-  // ==================================================
+  // =========================================
   // SEND MESSAGE
-  // ==================================================
+  // =========================================
 
   const sendMessage = async (
     text = input
@@ -135,7 +258,7 @@ const AIChatbot = () => {
         {
           type: "bot",
           text:
-            "Server error",
+            "❌ Server Error",
         },
       ]);
 
@@ -147,9 +270,9 @@ const AIChatbot = () => {
     }
   };
 
-  // ==================================================
+  // =========================================
   // VOICE INPUT
-  // ==================================================
+  // =========================================
 
   const startVoice = () => {
 
@@ -188,6 +311,10 @@ const AIChatbot = () => {
 
     <div className="chatbot-container">
 
+    
+
+      {/* ================= HEADER ================= */}
+
       <div className="chatbot-header">
 
         <button
@@ -199,14 +326,76 @@ const AIChatbot = () => {
         >
           ← Home
         </button>
+  {/* ================= AI POPUP ================= */}
 
-        UtkalTree AI Assistant
+      {showPopup && (
+
+        <div className="ai-popup">
+
+          <div className="popup-glow"></div>
+
+          <div className="popup-header">
+
+            🤖 UtkalTree AI
+
+            <span className="live-dot"></span>
+
+          </div>
+
+          <div className="popup-text">
+
+            {popupText}
+
+            <span className="typing-cursor">
+              |
+            </span>
+
+          </div>
+
+        </div>
+      )}
+        
+
+        <button
+          className="chatlogoutbtn"
+          onClick={() => {
+
+            localStorage.clear();
+
+            sessionStorage.clear();
+
+            window.location.hash =
+              "#/";
+          }}
+        >
+          Logout
+        </button>
 
       </div>
 
-      {/* ================= MESSAGES ================= */}
+      {/* ================= CHAT AREA ================= */}
 
       <div className="chatbot-messages">
+
+        {messages.length === 0 && (
+
+          <div className="empty-chat">
+
+            <div className="empty-icon">
+              🤖
+            </div>
+
+            <h2>
+              Welcome To UtkalTree AI
+            </h2>
+
+            <p>
+              Ask anything about
+              SOPs, Policies Instantly
+            </p>
+
+          </div>
+        )}
 
         {messages.map(
           (msg, index) => (
@@ -230,8 +419,17 @@ const AIChatbot = () => {
         )}
 
         {loading && (
+
           <div className="message bot">
-            Typing...
+
+            <div className="typing">
+
+              <span></span>
+              <span></span>
+              <span></span>
+
+            </div>
+
           </div>
         )}
 
@@ -247,7 +445,7 @@ const AIChatbot = () => {
 
           <input
             type="text"
-            placeholder="Ask SOP or Policy"
+            placeholder="Search SOPs, Policies..."
             value={input}
             onChange={(e) =>
               setInput(
@@ -300,17 +498,19 @@ const AIChatbot = () => {
         </div>
 
         <button
+          className="voice-btn"
           onClick={startVoice}
         >
           🎤
         </button>
 
         <button
+          className="send-btn"
           onClick={() =>
             sendMessage()
           }
         >
-          Send
+          ➤
         </button>
 
       </div>
