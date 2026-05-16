@@ -235,7 +235,7 @@ const onDrop = (acceptedFiles) => {
         {progress}%
       </div>
 
-      <button
+      <button className="upload-btn"
         onClick={
           handleUpload
         }

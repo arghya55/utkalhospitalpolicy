@@ -257,6 +257,22 @@ const isDepartmentUser =
     >
       ← Back
     </button>
+    <button
+        className="backbtnhome"
+        onClick={() => (window.location.hash = "#/Home")}
+      >
+        ⌂ Home
+      </button>
+    <button
+        className="logoutbtn"
+        onClick={() => {
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.hash = "#/";
+        }}
+      >
+        Logout
+      </button>
 
     {/* TITLE */}
 
@@ -264,7 +280,7 @@ const isDepartmentUser =
 
     <h1 className="navbar-title">
       Welcome to {department?.name || "Department"} Media Library
-      {user?.name ? ` : ${user.name}` : ""}
+      {/* {user?.name ? ` : ${user.name}` : ""} */}
     </h1>
       <p className="navbar-subtitle">
          The {department?.name || "Department"} Department sincerely thanks you for reviewing the media files.

@@ -43,7 +43,7 @@ const Policy = () => {
 
       <div className="user-info">
  <h3>
-  Welcome To Utkal SOP / Policies
+  Welcome To Utkal Hospital SOP / Policies
 </h3>
 </div>
  <h1> {user?.name ? `  ${user.name}` : ""}</h1>

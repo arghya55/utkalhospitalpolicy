@@ -1,6 +1,4 @@
-
 import "./UserLogin.css";
-
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -10,36 +8,59 @@ const UserLogin = () => {
     password: "",
   });
 
- const handleLogin = async (e) => {
-  e.preventDefault();
+  const [error, setError] = useState("");
 
-  try {
-    const res = await axios.post(
-      "https://utkalpolicybackend.onrender.com/api/users/login",
-      form
-    );
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(""); // reset old error
 
+    try {
+      const res = await axios.post(
+        "https://utkalpolicybackend.onrender.com/api/users/login",
+        form
+      );
 
+      if (res.data.token) {
+        sessionStorage.setItem("user", JSON.stringify(res.data.user));
+        sessionStorage.setItem("token", res.data.token);
 
-    if (res.data.token) {
-     sessionStorage.setItem("user", JSON.stringify(res.data.user));
-sessionStorage.setItem("token", res.data.token);
+        window.location.hash = "#/policy";
+      } else {
+        setError("Invalid login response");
+      }
 
-      console.log("TOKEN SAVED:", res.data.token);
-          console.log("LOGIN RESPONSE:", res.data);
+    } catch (err) {
+  const status = err.response?.status;
+  const msg = err.response?.data?.message;
 
-      window.location.hash = "#/policy";
-    } else {
-      alert("No token received");
-    }
-
-  } catch (err) {
-    console.log(err.response?.data || err.message);
+  if (status === 401 || status === 400) {
+    setError("❌ Wrong username or password");
+  } 
+  else if (msg) {
+    setError(`❌ ${msg}`);
+  } 
+  else {
+    setError("❌ Network / Server error. Try again later");
   }
-};
+}
+  };
+
   return (
     <div className="login-container">
+      
       <form onSubmit={handleLogin} className="login-box">
+            {/* 🔥 ERROR MESSAGE */}
+        {error && <div className="error-box">{error}</div>}
+
+        <button
+          type="button"
+          className="user-homeback-btn"
+          onClick={() => (window.location.hash = "#/home")}
+        >
+          Back Home
+        </button>
+
+        <h2>USER LOGIN</h2>
 
         <input
           placeholder="Employee ID"
@@ -57,15 +78,8 @@ sessionStorage.setItem("token", res.data.token);
         />
 
         <button type="submit">Login</button>
-<button
-  type='button'
-  className="user-logout-btn"
-  onClick={() => {
-    window.location.hash = "#/home";
-  }}
->
-  back Home
-</button>
+
+    
 
       </form>
     </div>

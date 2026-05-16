@@ -1,6 +1,10 @@
 const Policy = require("../models/Policy");
-const Sop = require("../models/sop");
+const Sop = require("../models/Sop");
 const Department = require("../models/Department");
+
+// ======================================================
+// CHATBOT
+// ======================================================
 
 const chatbot = async (req, res) => {
 
@@ -19,26 +23,95 @@ const chatbot = async (req, res) => {
     const searchText =
       message.toLowerCase().trim();
 
-    // ================= REMOVE policy/sop WORD =================
+    // ======================================================
+    // 1. DIRECT POLICY TITLE SEARCH
+    // ======================================================
+
+    const allPolicies =
+      await Policy.find()
+        .populate("department");
+
+    for (const policy of allPolicies) {
+
+      const title =
+        policy.title.toLowerCase();
+
+      if (
+        title.includes(searchText) ||
+        searchText.includes(title)
+      ) {
+
+        return res.json({
+          success: true,
+
+          answer:
+`🏥 ${policy.department?.name?.toUpperCase() || ""} DEPARTMENT POLICY
+
+📘 ${policy.title}
+
+${policy.description}
+`,
+        });
+      }
+    }
+
+    // ======================================================
+    // 2. DIRECT SOP TITLE SEARCH
+    // ======================================================
+
+    const allSops =
+      await Sop.find()
+        .populate("department");
+
+    for (const sop of allSops) {
+
+      const title =
+        sop.title.toLowerCase();
+
+      if (
+        title.includes(searchText) ||
+        searchText.includes(title)
+      ) {
+
+        return res.json({
+          success: true,
+
+          answer:
+`🏥 ${sop.department?.name?.toUpperCase() || ""} DEPARTMENT SOP
+
+📗 ${sop.title}
+
+${sop.description}
+`,
+        });
+      }
+    }
+
+    // ======================================================
+    // REMOVE policy/sop WORD
+    // ======================================================
 
     const cleanText =
       searchText
-        .replace("policy", "")
-        .replace("policies", "")
-        .replace("sop", "")
+        .replace(/policy/gi, "")
+        .replace(/policies/gi, "")
+        .replace(/sop/gi, "")
         .trim();
 
-    // ================= FIND ALL DEPARTMENTS =================
+    // ======================================================
+    // LOAD DEPARTMENTS
+    // ======================================================
 
     const departments =
       await Department.find();
 
-    // ================= MATCH DEPARTMENT =================
-
     let department = null;
 
-    // exact / contains match
-    for (let dept of departments) {
+    // ======================================================
+    // EXACT + CONTAINS MATCH
+    // ======================================================
+
+    for (const dept of departments) {
 
       const deptName =
         dept.name.toLowerCase();
@@ -53,20 +126,20 @@ const chatbot = async (req, res) => {
       }
     }
 
-    // ================= TYPO MATCH =================
-    // phamacy -> pharmacy
+    // ======================================================
+    // TYPO SUPPORT
+    // ======================================================
 
     if (!department) {
 
-      for (let dept of departments) {
+      for (const dept of departments) {
 
         const deptName =
           dept.name.toLowerCase();
 
-        // first 3 letters match
         if (
-          deptName.substring(0,3) ===
-          cleanText.substring(0,3)
+          deptName.substring(0, 3) ===
+          cleanText.substring(0, 3)
         ) {
 
           department = dept;
@@ -75,7 +148,9 @@ const chatbot = async (req, res) => {
       }
     }
 
-    // ================= NOT FOUND =================
+    // ======================================================
+    // NOT FOUND
+    // ======================================================
 
     if (!department) {
 
@@ -86,7 +161,21 @@ const chatbot = async (req, res) => {
       });
     }
 
-    // ================= CHECK TYPE =================
+    // ======================================================
+    // FETCH DATA
+    // ======================================================
+
+    const policies =
+      await Policy.find({
+        department:
+          department._id,
+      });
+
+    const sops =
+      await Sop.find({
+        department:
+          department._id,
+      });
 
     const isPolicySearch =
       searchText.includes("policy");
@@ -96,19 +185,13 @@ const chatbot = async (req, res) => {
 
     let responseText = "";
 
-    // ================= POLICY SEARCH =================
+    // ======================================================
+    // POLICY SEARCH
+    // ======================================================
 
     if (isPolicySearch) {
 
-      const policies =
-        await Policy.find({
-          department:
-            department._id,
-        });
-
-      if (
-        policies.length === 0
-      ) {
+      if (policies.length === 0) {
 
         return res.json({
           success: true,
@@ -118,7 +201,7 @@ const chatbot = async (req, res) => {
       }
 
       responseText =
-`🏥 ${department.name.toUpperCase()} Department Policies
+`🏥 ${department.name.toUpperCase()} DEPARTMENT POLICIES
 
 `;
 
@@ -135,19 +218,13 @@ ${policy.description}
       );
     }
 
-    // ================= SOP SEARCH =================
+    // ======================================================
+    // SOP SEARCH
+    // ======================================================
 
     else if (isSopSearch) {
 
-      const sops =
-        await Sop.find({
-          department:
-            department._id,
-        });
-
-      if (
-        sops.length === 0
-      ) {
+      if (sops.length === 0) {
 
         return res.json({
           success: true,
@@ -157,7 +234,7 @@ ${policy.description}
       }
 
       responseText =
-`🏥 ${department.name.toUpperCase()} Department SOPs
+`🏥 ${department.name.toUpperCase()} DEPARTMENT SOPS
 
 `;
 
@@ -174,32 +251,20 @@ ${sop.description}
       );
     }
 
-    // ================= DEFAULT =================
+    // ======================================================
+    // DEFAULT
+    // ======================================================
 
     else {
 
-      const policies =
-        await Policy.find({
-          department:
-            department._id,
-        });
-
-      const sops =
-        await Sop.find({
-          department:
-            department._id,
-        });
-
       responseText =
-`🏥 ${department.name.toUpperCase()} Department Records
+`🏥 ${department.name.toUpperCase()} DEPARTMENT RECORDS
 
 `;
 
       // ================= POLICIES =================
 
-      if (
-        policies.length > 0
-      ) {
+      if (policies.length > 0) {
 
         responseText +=
 `📘 POLICIES
@@ -221,13 +286,10 @@ ${policy.description}
 
       // ================= SOPS =================
 
-      if (
-        sops.length > 0
-      ) {
+      if (sops.length > 0) {
 
         responseText +=
-`
-📗 SOPS
+`\n📗 SOPS
 
 `;
 
@@ -243,8 +305,6 @@ ${sop.description}
           }
         );
       }
-
-      // ================= EMPTY =================
 
       if (
         policies.length === 0 &&
@@ -277,6 +337,106 @@ ${sop.description}
   }
 };
 
+// ======================================================
+// SUGGESTIONS API
+// ======================================================
+
+const getSuggestions = async (req, res) => {
+
+  try {
+
+    const query =
+      req.query.query
+        ?.toLowerCase()
+        .trim();
+
+    if (!query) {
+
+      return res.json([]);
+    }
+
+    const departments =
+      await Department.find();
+
+    const policies =
+      await Policy.find();
+
+    const sops =
+      await Sop.find();
+
+    let suggestions = [];
+
+    // departments
+
+    departments.forEach((dept) => {
+
+      if (
+        dept.name.toLowerCase()
+          .includes(query)
+      ) {
+
+        suggestions.push(
+          `${dept.name} Policy`
+        );
+
+        suggestions.push(
+          `${dept.name} SOP`
+        );
+      }
+    });
+
+    // policies
+
+    policies.forEach((policy) => {
+
+      if (
+        policy.title.toLowerCase()
+          .includes(query)
+      ) {
+
+        suggestions.push(
+          policy.title
+        );
+      }
+    });
+
+    // sops
+
+    sops.forEach((sop) => {
+
+      if (
+        sop.title.toLowerCase()
+          .includes(query)
+      ) {
+
+        suggestions.push(
+          sop.title
+        );
+      }
+    });
+
+    suggestions =
+      [...new Set(suggestions)];
+
+    return res.json(
+      suggestions.slice(0, 10)
+    );
+
+  } catch (error) {
+
+    console.log(
+      "SUGGESTION ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      message:
+        "Suggestion error",
+    });
+  }
+};
+
 module.exports = {
   chatbot,
+  getSuggestions,
 };

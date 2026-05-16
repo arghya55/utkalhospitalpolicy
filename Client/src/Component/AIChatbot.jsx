@@ -25,8 +25,15 @@ const AIChatbot = () => {
   const [loading, setLoading] =
     useState(false);
 
+  const [suggestions, setSuggestions] =
+    useState([]);
+
   const messagesEndRef =
     useRef(null);
+
+  // ==================================================
+  // AUTO SCROLL
+  // ==================================================
 
   useEffect(() => {
 
@@ -37,15 +44,56 @@ const AIChatbot = () => {
 
   }, [messages]);
 
-  // ================= SEND MESSAGE =================
+  // ==================================================
+  // LOAD SUGGESTIONS
+  // ==================================================
 
-  const sendMessage = async () => {
+  useEffect(() => {
 
-    if (!input.trim()) return;
+    const fetchSuggestions =
+      async () => {
+
+        if (!input.trim()) {
+
+          setSuggestions([]);
+
+          return;
+        }
+
+        try {
+
+          const res =
+            await api.get(
+              `/chatbot/suggestions?query=${input}`
+            );
+
+          setSuggestions(
+            res.data
+          );
+
+        } catch (error) {
+
+          console.log(error);
+        }
+      };
+
+    fetchSuggestions();
+
+  }, [input]);
+
+  // ==================================================
+  // SEND MESSAGE
+  // ==================================================
+
+  const sendMessage = async (
+    text = input
+  ) => {
+
+    if (!text.trim()) return;
 
     const userMessage = {
       type: "user",
-      text: input,
+      text,
     };
 
     setMessages((prev) => [
@@ -55,19 +103,22 @@ const AIChatbot = () => {
 
     setLoading(true);
 
+    setSuggestions([]);
+
     try {
 
       const res =
         await api.post(
           "/chatbot/chat",
           {
-            message: input,
+            message: text,
           }
         );
 
       const botMessage = {
         type: "bot",
-        text: res.data.answer,
+        text:
+          res.data.answer,
       };
 
       setMessages((prev) => [
@@ -96,7 +147,9 @@ const AIChatbot = () => {
     }
   };
 
-  // ================= VOICE INPUT =================
+  // ==================================================
+  // VOICE INPUT
+  // ==================================================
 
   const startVoice = () => {
 
@@ -116,7 +169,8 @@ const AIChatbot = () => {
     const recognition =
       new SpeechRecognition();
 
-    recognition.lang = "en-IN";
+    recognition.lang =
+      "en-IN";
 
     recognition.start();
 
@@ -135,8 +189,22 @@ const AIChatbot = () => {
     <div className="chatbot-container">
 
       <div className="chatbot-header">
+
+        <button
+          className="backchat-home-btn"
+          onClick={() =>
+            (window.location.hash =
+              "#/home")
+          }
+        >
+          ← Home
+        </button>
+
         UtkalTree AI Assistant
+
       </div>
+
+      {/* ================= MESSAGES ================= */}
 
       <div className="chatbot-messages">
 
@@ -171,27 +239,65 @@ const AIChatbot = () => {
 
       </div>
 
+      {/* ================= INPUT AREA ================= */}
+
       <div className="chatbot-input-area">
 
-        <input
-          type="text"
-          placeholder="Ask SOP or Policy"
-          value={input}
-          onChange={(e) =>
-            setInput(
-              e.target.value
-            )
-          }
+        <div className="input-wrapper">
 
-          onKeyDown={(e) => {
-
-            if (
-              e.key === "Enter"
-            ) {
-              sendMessage();
+          <input
+            type="text"
+            placeholder="Ask SOP or Policy"
+            value={input}
+            onChange={(e) =>
+              setInput(
+                e.target.value
+              )
             }
-          }}
-        />
+
+            onKeyDown={(e) => {
+
+              if (
+                e.key === "Enter"
+              ) {
+
+                sendMessage();
+              }
+            }}
+          />
+
+          {/* ================= SUGGESTIONS ================= */}
+
+          {suggestions.length >
+            0 && (
+
+            <div className="suggestion-box">
+
+              {suggestions.map(
+                (
+                  suggestion,
+                  index
+                ) => (
+
+                  <div
+                    key={index}
+                    className="suggestion-item"
+
+                    onClick={() =>
+                      sendMessage(
+                        suggestion
+                      )
+                    }
+                  >
+                    🔍 {suggestion}
+                  </div>
+                )
+              )}
+
+            </div>
+          )}
+
+        </div>
 
         <button
           onClick={startVoice}
@@ -200,7 +306,9 @@ const AIChatbot = () => {
         </button>
 
         <button
-          onClick={sendMessage}
+          onClick={() =>
+            sendMessage()
+          }
         >
           Send
         </button>

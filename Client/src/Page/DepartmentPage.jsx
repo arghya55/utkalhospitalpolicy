@@ -4,6 +4,12 @@ import MediaUpload from "../Component/MediaUpload";
 import logo from "../assets/utkal-logo.png";
 import "./DepartmentPage.css";
 
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+} from "@hello-pangea/dnd";
+
 const DepartmentPage = ({ deptId }) => {
   const [department, setDepartment] = useState(null);
   const [policies, setPolicies] = useState([]);
@@ -12,6 +18,8 @@ const DepartmentPage = ({ deptId }) => {
   
   const [filterType, setFilterType] = useState("Policy");
 
+  const [search, setSearch] = useState("");
+
   // POLICY MODAL
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -19,6 +27,25 @@ const DepartmentPage = ({ deptId }) => {
   // SOP MODAL
   const [showSopModal, setShowSopModal] = useState(false);
   const [editSop, setEditSop] = useState(null);
+
+const [showGoTop, setShowGoTop] = useState(false);
+
+useEffect(() => {
+  const handleScroll = () => {
+    setShowGoTop(window.scrollY > 300);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
+const scrollTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
 
   // const user = JSON.parse(sessionStorage.getItem("user"));
 
@@ -246,6 +273,9 @@ const DepartmentPage = ({ deptId }) => {
     }
   };
 
+
+
+
   // ================= PERMISSION =================
   const canManage =
     user &&
@@ -254,121 +284,132 @@ const DepartmentPage = ({ deptId }) => {
       String(department?._id);
 
         // ================= FILTERED DATA =================//
-  const visiblePolicies = canManage
-  ? policies
-  : policies.filter((p) => p.status === "Active");
+  const visiblePolicies = (
+  canManage
+    ? policies
+    : policies.filter((p) => p.status === "Active")
+).filter((p) =>
+  p.title.toLowerCase().includes(search.toLowerCase()) ||
+  p.description.toLowerCase().includes(search.toLowerCase())
+);
 
-const visibleSops = canManage
-  ? sops
-  : sops.filter((s) => s.status === "Active");
+const visibleSops = (
+  canManage
+    ? sops
+    : sops.filter((s) => s.status === "Active")
+).filter((s) =>
+  s.title.toLowerCase().includes(search.toLowerCase()) ||
+  s.description.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
     <div className="dept-container">
       
       {/* ================= NAVBAR ================= */}
-
 <div className="dept-header">
 
-  <img src={logo} alt="logo" />
+  <div className="top-navbar">
 
-  {/* LEFT SIDE */}
-  <div className="nav-left">
+    <div className="nav-left">
 
-    <button
-      className="backbtn"
-      onClick={() =>
-        (window.location.hash =
-          "#/policy")
-      }
-    >
-      ← Back
-    </button>
+      <div className="logo-box">
+        <img src={logo} alt="logo" />
+      </div>
 
-  </div>
-
-  {/* CENTER */}
-  <div className="welcome-section">
-
-    <h1 className="dept-name">
-      SOP/Policy of {department?.name || "Department"}
-      {user?.name ? ` : ${user.name}` : ""}
-    </h1>
-
-    <h3 className="dept-subtitle">
-      We are glad to have you in the{" "}
-      <span className="deptname">{department?.name}</span> Department
-    </h3>
-
-  </div>
-
-  {/* RIGHT SIDE */}
-  <div className="nav-right">
-
-    {/* FILTER */}
-    <div className="filter-box">
-
-      <h4 className="catagory">
-        Select Category
-      </h4>
-
-      <select
-        value={filterType}
-        onChange={(e) =>
-          setFilterType(e.target.value)
-        }
-        className="filter-dropdown"
+      <button
+        className="backbtn"
+        onClick={() => (window.location.hash = "#/policy")}
       >
-        <option value="Policy">
-          Policy
-        </option>
+        ← Back
+      </button>
 
-        <option value="SOP">
-          SOP
-        </option>
+      <button
+        className="backbtnhome"
+        onClick={() => (window.location.hash = "#/Home")}
+      >
+        ⌂ Home
+      </button>
 
-      </select>
+       <div className="welcome-section">
+    <h1 className="dept-name">
+      SOP / Policy of {department?.name || "Department"}
+    </h1>
+  </div>
+
+<input
+  type="text"
+  placeholder="Search Sop & Policy..."
+  value={search}
+  onChange={(e) =>
+    setSearch(e.target.value)
+  }
+/>
 
     </div>
 
-    {/* MEDIA UPLOAD */}
-    {canManage && (
-      <MediaUpload deptId={deptId} />
-    )}
+    <div className="welcmbox">
 
-    {/* MEDIA LIBRARY */}
-    <button
-      className="media-btn"
-      onClick={() =>
-        (window.location.hash =
-          `#/media/${deptId}`)
-      }
+      <h3>
+        Welcome {user?.name ? `: ${user.name}` : ""}
+      </h3>
+
+      <button
+        className="logoutbtn"
+        onClick={() => {
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.hash = "#/";
+        }}
+      >
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+  <div className="nav-right">
+
+<div className="action-toolbar">
+
+  <div className="filter-box">
+
+    <h4 className="category-title">
+      Select Category to View
+    </h4>
+
+    <select
+      value={filterType}
+      onChange={(e) => setFilterType(e.target.value)}
+      className="filter-dropdown"
     >
-      📁 Media Library
-    </button>
+      <option value="Policy">Policy</option>
+      <option value="SOP">SOP</option>
+    </select>
 
-    {/* ADD POLICY */}
+  </div>
+
+  <div className="action-buttons">
+
     {canManage && (
       <button
         className="add-policy-btn"
         onClick={() =>
-          (window.location.hash =
-            "#/page/addpolicy")
+          (window.location.hash = "#/page/addpolicy")
         }
       >
-        + Policy
+        Add Policy
       </button>
     )}
 
-    {/* ADD SOP */}
     {canManage && (
       <button
         className="add-sop-btn"
         onClick={() =>
-          (window.location.hash =
-            "#/page/addsop")
+          (window.location.hash = "#/page/addsop")
         }
       >
-        + SOP
+        Add SOP
       </button>
     )}
 
@@ -376,6 +417,25 @@ const visibleSops = canManage
 
 </div>
 
+    {canManage && <MediaUpload deptId={deptId} />}
+
+    <button
+      className="media-btn"
+      onClick={() =>
+        (window.location.hash = `#/media/${deptId}`)
+      }
+    >
+      📁 Media Library
+    </button>
+
+  </div>
+
+</div>
+         <p className="filtertype-change-name">
+  {filterType === "All"
+    ? "All Documents"
+    : filterType}
+</p>
       {/* ================= POLICIES ================= */}
       {(filterType === "All" ||
         filterType === "Policy") && (
@@ -452,7 +512,9 @@ const visibleSops = canManage
 
               </div>
 
-              <p>{p.description}</p>
+            <p>
+  {p.description.match(/.{1,139}(\s|$)/g)?.join("\n")}
+</p>
 
             </div>
 
@@ -539,7 +601,9 @@ const visibleSops = canManage
 
               </div>
 
-              <p>{s.description}</p>
+             <p>
+  {s.description.match(/.{1,139}(\s|$)/g)?.join("\n")}
+</p>
 
             </div>
 
@@ -555,7 +619,9 @@ const visibleSops = canManage
           <div className="modal-content">
 
             <h2>Edit Policy</h2>
-
+            <h4 >
+              Write Policy Title Here
+            </h4>
             <input
               value={editData.title}
               onChange={(e) =>
@@ -566,7 +632,9 @@ const visibleSops = canManage
                 })
               }
             />
-
+              <h4 >
+              Write Policy Content Here
+            </h4>
             <textarea
               value={
                 editData.description
@@ -632,7 +700,9 @@ const visibleSops = canManage
           <div className="modal-content">
 
             <h2>Edit SOP</h2>
-
+ <h4 >
+              Write Sop Title Here
+            </h4>
             <input
               value={editSop.title}
               onChange={(e) =>
@@ -643,6 +713,9 @@ const visibleSops = canManage
                 })
               }
             />
+             <h4 >
+              Write Sop Content Here
+            </h4>
 
             <textarea
               value={
@@ -701,8 +774,91 @@ const visibleSops = canManage
 
         </div>
       )}
+<footer className="footer">
+
+  <div className="footer-container">
+
+    {/* LEFT */}
+
+    <div className="footer-about">
+
+      <h2>Utkal Healthcare Private Limited</h2>
+
+      <div className="footer-contact">
+
+      <h3>Contact Us</h3>
+
+      <p>
+        📧 it@utkalhospital.com
+      </p>
+
+      <p>
+        📍 PLOT-321, PLOT NO-C/3,
+        WARD -BH -C III, NILADRI VIHAR,
+        BHUBANESWAR, Khordha,
+        Odisha - 751021
+      </p>
 
     </div>
+
+    </div>
+
+    {/* SERVICES */}
+
+    <div className="footer-links">
+
+      <h3>Quick Links</h3>
+
+      <a href="#/policy">
+        Departments
+      </a>
+
+      <a href={`#/media/${deptId}`}>
+        Media Library
+      </a>
+
+      {canManage && (
+        <a href="#/page/addpolicy">
+          Add Policy
+        </a>
+      )}
+
+      {canManage && (
+        <a href="#/page/addsop">
+          Add SOP
+        </a>
+      )}
+
+      <a href="#/Home">
+        Dashboard
+      </a>
+
+    </div>
+     {showGoTop && (
+  <div className="go-top-btn" onClick={scrollTop}>
+    ↑ Go Top
+  </div>
+)}
+
+    {/* CONTACT */}
+
+    
+
+  </div>
+
+  {/* BOTTOM */}
+
+  <div className="footer-bottom">
+  © 2026 | Developed by
+  <span className="developer-name">
+    {" "}Arghya Dey
+  </span>
+  {" "}from IT Department
+</div>
+
+</footer>
+    </div>
+    
   );
 };
 
