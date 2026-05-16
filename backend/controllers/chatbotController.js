@@ -134,9 +134,12 @@ ${exactSop.description}
   });
 }
 
-    // ======================================================
-    // FIND DEPARTMENT
-    // ======================================================
+   // ======================================================
+// FIND DEPARTMENT
+// ======================================================
+
+let department = null;
+
 for (const dept of departments) {
 
   const deptName =
@@ -172,164 +175,172 @@ for (const dept of departments) {
     break;
   }
 }
+// ======================================================
+// POLICY SEARCH
+// ======================================================
 
-    // ======================================================
-    // POLICY TITLE SEARCH
-    // ======================================================
+if (isPolicySearch) {
 
-    if (isPolicySearch) {
+  let matchedPolicies = [];
 
-      let matchedPolicies =
-        allPolicies.filter((policy) => {
+  // ===============================
+  // DEPARTMENT POLICY SEARCH
+  // ===============================
 
-          const title =
-            policy.title.toLowerCase();
+  if (department) {
 
-          const desc =
-            policy.description.toLowerCase();
+    matchedPolicies =
+      allPolicies.filter(
+        (policy) =>
+          String(
+            policy.department?._id
+          ) ===
+          String(
+            department._id
+          )
+      );
+  }
 
-          const text =
-            title + " " + desc;
+  // ===============================
+  // TITLE SEARCH
+  // ===============================
 
-          const departmentMatch =
-            department
-              ? String(
-                  policy.department?._id
-                ) ===
-                String(
-                  department._id
-                )
-              : true;
+  else {
 
-          const keywordMatch =
-            words.some((word) =>
-              text.includes(word)
-            );
+    matchedPolicies =
+      allPolicies.filter((policy) => {
 
-          return (
-            departmentMatch &&
-            keywordMatch
-          );
-        });
+        const title =
+          policy.title.toLowerCase();
 
-      if (
-        matchedPolicies.length === 0
-      ) {
+        return words.some((word) =>
+          title.includes(word)
+        );
+      });
+  }
 
-        return res.json({
-          success: true,
-          answer:
-            "No matching policy found.",
-        });
-      }
+  if (
+    matchedPolicies.length === 0
+  ) {
 
-      let responseText = "";
+    return res.json({
+      success: true,
+      answer:
+        "No matching policy found.",
+    });
+  }
 
-      if (department) {
+  let responseText = "";
 
-        responseText =
+  if (department) {
+
+    responseText =
 `🏥 ${department.name.toUpperCase()} DEPARTMENT POLICIES
 
 `;
-      }
+  }
 
-      matchedPolicies.forEach(
-        (policy, index) => {
+  matchedPolicies.forEach(
+    (policy, index) => {
 
-          responseText +=
+      responseText +=
 `📘 ${index + 1}. ${policy.title}
 
 ${policy.description}
 
 `;
-        }
-      );
-
-      return res.json({
-        success: true,
-        answer:
-          responseText,
-      });
     }
+  );
 
+  return res.json({
+    success: true,
+    answer:
+      responseText,
+  });
+}
     // ======================================================
-    // SOP TITLE SEARCH
-    // ======================================================
+// SOP SEARCH
+// ======================================================
 
-    if (isSopSearch) {
+if (isSopSearch) {
 
-      let matchedSops =
-        allSops.filter((sop) => {
+  let matchedSops = [];
 
-          const title =
-            sop.title.toLowerCase();
+  // ===============================
+  // DEPARTMENT SOP SEARCH
+  // ===============================
 
-          const desc =
-            sop.description.toLowerCase();
+  if (department) {
 
-          const text =
-            title + " " + desc;
+    matchedSops =
+      allSops.filter(
+        (sop) =>
+          String(
+            sop.department?._id
+          ) ===
+          String(
+            department._id
+          )
+      );
+  }
 
-          const departmentMatch =
-            department
-              ? String(
-                  sop.department?._id
-                ) ===
-                String(
-                  department._id
-                )
-              : true;
+  // ===============================
+  // TITLE SEARCH
+  // ===============================
 
-          const keywordMatch =
-            words.some((word) =>
-              text.includes(word)
-            );
+  else {
 
-          return (
-            departmentMatch &&
-            keywordMatch
-          );
-        });
+    matchedSops =
+      allSops.filter((sop) => {
 
-      if (
-        matchedSops.length === 0
-      ) {
+        const title =
+          sop.title.toLowerCase();
 
-        return res.json({
-          success: true,
-          answer:
-            "No matching SOP found.",
-        });
-      }
+        return words.some((word) =>
+          title.includes(word)
+        );
+      });
+  }
 
-      let responseText = "";
+  if (
+    matchedSops.length === 0
+  ) {
 
-      if (department) {
+    return res.json({
+      success: true,
+      answer:
+        "No matching SOP found.",
+    });
+  }
 
-        responseText =
+  let responseText = "";
+
+  if (department) {
+
+    responseText =
 `🏥 ${department.name.toUpperCase()} DEPARTMENT SOPS
 
 `;
-      }
+  }
 
-      matchedSops.forEach(
-        (sop, index) => {
+  matchedSops.forEach(
+    (sop, index) => {
 
-          responseText +=
+      responseText +=
 `📗 ${index + 1}. ${sop.title}
 
 ${sop.description}
 
 `;
-        }
-      );
-
-      return res.json({
-        success: true,
-        answer:
-          responseText,
-      });
     }
+  );
+
+  return res.json({
+    success: true,
+    answer:
+      responseText,
+  });
+}
 
     // ======================================================
     // NORMAL SEARCH
