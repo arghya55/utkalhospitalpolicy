@@ -209,37 +209,37 @@ body{
 
   position:absolute;
 
-  top:50%;
+  top:22px;
 
   left:50%;
 
-  transform:translateX(-50%,50%);
+  transform:translateX(-50%);
 
-  width:430px;
+  width:420px;
 
   max-width:92%;
 
-  padding:24px;
+  padding:22px 24px;
 
-  border-radius:28px;
+  border-radius:26px;
 
   overflow:hidden;
 
   z-index:9999;
 
   background:
-    rgba(255,255,255,0.12);
+    rgba(255,255,255,0.92);
 
   backdrop-filter:blur(20px);
 
   border:
-    1px solid rgba(255,255,255,0.18);
+    1px solid rgba(255,255,255,0.4);
 
   box-shadow:
-    0 25px 60px rgba(0,0,0,0.25);
+    0 18px 45px rgba(0,0,0,0.16);
 
   animation:
-    popupShow 0.5s ease;
+    popupShow 0.4s ease;
 }
 
 .popup-glow{
@@ -733,10 +733,12 @@ body{
 
   .ai-popup{
 
-    width:92%;
+  top:75px;
 
-    top:120px;
-  }
+  right:12px;
+
+  width:220px;
+}
 
   .backchat-home-btn{
 

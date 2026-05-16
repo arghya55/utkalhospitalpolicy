@@ -32,6 +32,9 @@ const AIChatbot = () => {
     useState(0);
     const [popupMessages, setPopupMessages] =
   useState([]);
+  const [popupPaused, setPopupPaused] =
+  useState(false);
+  const popupTimerRef = useRef(null);
 
   const messagesEndRef =
     useRef(null);
@@ -84,6 +87,7 @@ useEffect(() => {
   // =========================================
 
   useEffect(() => {
+    if (popupPaused) return;
 
     let typingInterval;
 
@@ -134,7 +138,7 @@ useEffect(() => {
 
               setShowPopup(false);
 
-            }, 3500);
+            }, 3000);
 
           nextTimeout =
             setTimeout(() => {
@@ -165,7 +169,8 @@ useEffect(() => {
       );
     };
 
-  }, [messageIndex, input]);
+  }, [messageIndex,  popupPaused,
+  popupMessages]);
 
   // =========================================
   // LOAD SUGGESTIONS
@@ -213,6 +218,34 @@ useEffect(() => {
   ) => {
 
     if (!text.trim()) return;
+
+    // =========================
+// STOP POPUP AFTER SEARCH
+// =========================
+
+setShowPopup(false);
+
+setPopupPaused(true);
+
+// CLEAR OLD TIMER
+
+if (popupTimerRef.current) {
+
+  clearTimeout(
+    popupTimerRef.current
+  );
+}
+
+// SHOW AGAIN AFTER 10 MIN
+
+popupTimerRef.current =
+  setTimeout(() => {
+
+    setPopupPaused(false);
+
+    setShowPopup(true);
+
+  }, 10 * 60 * 1000);
 
     const userMessage = {
       type: "user",
