@@ -60,7 +60,7 @@ body{
   background:
     radial-gradient(
       circle at center,
-      rgba(15,23,42,0.92),
+      rgba(50, 59, 53, 0.92),
       rgba(2,6,23,0.98)
     );
 
@@ -183,28 +183,81 @@ body{
 }
 
 /* =====================================================
-   PARTICLES
+   FLOWER PARTICLES
 ===================================================== */
 
 .particle{
 
   position:absolute;
 
-  top:-50px;
+  top:-60px;
 
-  width:10px;
-  height:10px;
+  width:30px;
 
-  border-radius:50%;
+  height:30px;
 
-  background:
-    rgba(255,255,255,0.9);
-
-  box-shadow:
-    0 0 12px white;
+  pointer-events:none;
 
   animation:
-    falling linear infinite;
+    flowerFall linear infinite;
+
+  opacity:0.95;
+}
+
+/* FLOWER */
+
+.particle::before{
+
+ content:"🌼";
+
+  position:absolute;
+
+  font-size:28px;
+
+  animation:
+    flowerRotate 5s linear infinite;
+}
+
+/* FALLING */
+
+@keyframes flowerFall{
+
+  0%{
+
+    transform:
+      translateY(-80px)
+      translateX(0)
+      rotate(0deg);
+
+    opacity:0;
+  }
+
+  10%{
+    opacity:1;
+  }
+
+  100%{
+
+    transform:
+      translateY(120vh)
+      translateX(100px)
+      rotate(360deg);
+
+    opacity:0;
+  }
+}
+
+/* ROTATE */
+
+@keyframes flowerRotate{
+
+  0%{
+    transform:rotate(0deg);
+  }
+
+  100%{
+    transform:rotate(360deg);
+  }
 }
 
 /* =====================================================
