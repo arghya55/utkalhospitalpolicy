@@ -54,20 +54,20 @@ const CreateUsers = () => {
     e.preventDefault();
 
     if (editUser) {
-      const updatedData = { ...form };
+  const updatedData = { ...form };
 
-      // password empty হলে পাঠাবো না
-      if (!form.password) {
-        delete updatedData.password;
-      }
+  // password empty হলে পাঠাবো না
+  if (!form.password) {
+    delete updatedData.password;
+  }
 
-      await axios.put(
-        `/users/${editUser._id}`,
-        updatedData
-      );
-    } else {
-      await axios.post("/users", form);
-    }
+  await axios.put(
+    `/users/${editUser._id}`,
+    updatedData
+  );
+} else {
+  await axios.post("/users", form);
+}
     setForm({
       name: "",
       employeeId: "",
@@ -86,23 +86,23 @@ const CreateUsers = () => {
     fetchUsers();
   };
 
-  const handlePasswordUpdate = async (user) => {
-    const newPassword = prompt("Enter new password");
+const handlePasswordUpdate = async (user) => {
+  const newPassword = prompt("Enter new password");
 
-    if (!newPassword) return;
+  if (!newPassword) return;
 
-    try {
-      await axios.put(
-        `/users/${user._id}`,
-        { password: newPassword }
-      );
+  try {
+    await axios.put(
+      `/users/${user._id}`,
+      { password: newPassword }
+    );
 
-      alert("✅ Password updated successfully");
-    } catch (err) {
-      console.log(err);
-      alert("❌ Failed to update password");
-    }
-  };
+    alert("✅ Password updated successfully");
+  } catch (err) {
+    console.log(err);
+    alert("❌ Failed to update password");
+  }
+};
 
   return (
     <div className="user-container">
@@ -135,23 +135,23 @@ const CreateUsers = () => {
           />
 
           {editUser ? (
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="New Password (optional)"
-            />
-          ) : (
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="Password"
-              required
-            />
-          )}
+  <input
+    type="password"
+    name="password"
+    value={form.password}
+    onChange={handleChange}
+    placeholder="New Password (optional)"
+  />
+) : (
+  <input
+    type="password"
+    name="password"
+    value={form.password}
+    onChange={handleChange}
+    placeholder="Password"
+    required
+  />
+)}
 
           <select
             name="department"
@@ -209,26 +209,11 @@ const CreateUsers = () => {
 
                 <td>
                   <button className="edit-btn" onClick={() => handleEdit(u)}>Edit</button>
-                    <button
-    onClick={async () => {
-      await axios.patch(`/users/${u._id}/toggle`);
-      fetchUsers();
-    }}
-    style={{
-      padding: "6px 10px",
-      borderRadius: "8px",
-      border: "none",
-      background: u.isActive ? "#16a34a" : "#ef4444",
-      color: "white",
-    }}
-  >
-    {u.isActive ? "Active" : "Inactive"}
-  </button>
                   <button className="delete-btn" onClick={() => handleDelete(u._id)}>Delete</button>
-                  <button className="password-btn" onClick={() => handlePasswordUpdate(u)}>
-                    🔐 Password
-                  </button>
-
+                   <button className="password-btn" onClick={() => handlePasswordUpdate(u)}>
+  🔐 Password
+</button>
+                  
                 </td>
               </tr>
             ))}

@@ -426,35 +426,3 @@
     width:100%;
   }
 }
-
-.active-btn {
-  background: #22c55e;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.active-btn:hover {
-  background: #16a34a;
-  transform: translateY(-2px);
-}
-
-.inactive-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.inactive-btn:hover {
-  background: #dc2626;
-  transform: translateY(-2px);
-}
