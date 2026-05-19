@@ -1,160 +1,99 @@
-import React, {
-  useEffect,
-  useState,
-} from "react";
-
+import React, { useEffect, useState } from "react";
 import { api } from "../api";
 
-const MediaPage = ({
-  deptId,
-}) => {
-
-  const [media, setMedia] =
-    useState([]);
+const MediaPage = ({ deptId }) => {
+  const [media, setMedia] = useState([]);
 
   useEffect(() => {
     fetchMedia();
   }, [deptId]);
 
-  const fetchMedia =
-    async () => {
+  const fetchMedia = async () => {
+    try {
+      const res = await api.get(
+        `/media?departmentId=${deptId}`
+      );
+      setMedia(res.data || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-      try {
+  const getType = (m) =>
+    (m?.type || m?.category || "").toLowerCase();
 
-        const res =
-          await api.get(
-            `/media?departmentId=${deptId}`
-          );
+  const isImage = (type) => type.includes("image");
 
-        setMedia(res.data);
-
-      } catch (err) {
-
-        console.log(err);
-      }
-    };
+  const isVideo = (type) =>
+    type.includes("video") ||
+    type.includes("vedio") ||
+    type.includes("training");
 
   const fixUrl = (url, type = "") => {
+    if (!url) return "";
 
-    // IMAGE optimization
     if (type.includes("image")) {
-
-      return url?.replace(
-        "/upload/",
-        "/upload/q_auto,f_auto/"
-      );
+      return url.replace("/upload/", "/upload/q_auto,f_auto/");
     }
 
-    // VIDEO no optimization
     return url;
   };
 
   return (
     <div className="media-page">
-
-      <h2>
-        Department Media
-      </h2>
+      <h2 className="page-title">Department Media</h2>
 
       <div className="media-grid">
-
         {media.map((m) => {
-
-          const type =
-            (
-              m.type ||
-              m.category ||
-              ""
-            ).toLowerCase();
+          const type = getType(m);
 
           return (
+            <div key={m._id} className="media-card">
 
-            <div
-              key={m._id}
-              className="media-card"
-            >
-
-              <h3>{m.title}</h3>
+              {/* TITLE ALWAYS VISIBLE */}
+              <h3 className="media-title">
+                {m.title || "Untitled Media"}
+              </h3>
 
               {/* IMAGE */}
-
-              {type.includes("image") && (
-
+              {isImage(type) && (
                 <img
                   src={fixUrl(m.url, type)}
                   alt={m.title}
-                  width="300"
-                  style={{
-                    borderRadius: "8px",
-                  }}
+                  className="media-img"
                 />
               )}
 
               {/* VIDEO */}
-
-              {(
-                type.includes(
-                  "video"
-                ) ||
-                type.includes(
-                  "vedio"
-                ) ||
-                type.includes(
-                  "training"
-                )
-              ) && (
-
-                  <video
-                    className="media-video"
-                    controls
-                    preload="metadata"
-                    playsInline
-                  >
-                    <source
-                      src={m.url}
-                      type="video/mp4"
-                    />
-
-                    Your browser does not support video.
-                  </video>
-                )}
+              {isVideo(type) && (
+                <video
+                  className="media-video"
+                  controls
+                  preload="metadata"
+                  playsInline
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                >
+                  <source src={m.url} type="video/mp4" />
+                  Your browser does not support video.
+                </video>
+              )}
 
               {/* FILE */}
+              {!isImage(type) && !isVideo(type) && (
+                <div className="file-box">
+                  <p>📄 {m.type || "File"}</p>
 
-              {!(
-                type.includes(
-                  "image"
-                ) ||
-                type.includes(
-                  "video"
-                ) ||
-                type.includes(
-                  "vedio"
-                ) ||
-                type.includes(
-                  "training"
-                )
-              ) && (
-
-                  <div>
-
-                    <p>
-                      📄{" "}
-                      {m.type ||
-                        "file"}
-                    </p>
-
-                    <a
-                      href={m.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Open File
-                    </a>
-
-                  </div>
-                )}
-
+                  <a
+                    href={m.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open File
+                  </a>
+                </div>
+              )}
             </div>
           );
         })}
