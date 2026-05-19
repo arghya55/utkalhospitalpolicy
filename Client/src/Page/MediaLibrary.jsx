@@ -263,7 +263,8 @@ const isDepartmentUser =
       >
         ⌂ Home
       </button>
-    <button
+      {user&& (
+        <button
         className="logoutbtn"
         onClick={() => {
           localStorage.clear();
@@ -273,6 +274,8 @@ const isDepartmentUser =
       >
         Logout
       </button>
+      )}
+    
 
     {/* TITLE */}
 

@@ -24,6 +24,12 @@ const UserLogin = () => {
         sessionStorage.setItem("user", JSON.stringify(res.data.user));
         sessionStorage.setItem("token", res.data.token);
 
+          // ✅ GREETING ANIMATION FLAG
+  sessionStorage.setItem(
+    "showGreeting",
+    "true"
+  );
+
         window.location.hash = "#/policy";
       } else {
         setError("Invalid login response");
@@ -53,13 +59,14 @@ const UserLogin = () => {
         {error && <div className="error-box">{error}</div>}
 
         <button
-          type="button"
-          className="user-homeback-btn"
-          onClick={() => (window.location.hash = "#/home")}
-        >
-          Back Home
-        </button>
-
+  type="button"
+  className="user-homeback-btn"
+  onClick={() =>
+    (window.location.hash = "#/home")
+  }
+>
+  ✕
+</button>
         <h2>USER LOGIN</h2>
 
         <input

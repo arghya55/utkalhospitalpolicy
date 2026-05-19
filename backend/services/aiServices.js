@@ -19,7 +19,10 @@ const askAI = async (prompt) => {
     const result =
       await model.generateContent(prompt);
 
-    return result.response.text();
+    const response =
+      result.response.text();
+
+    return response;
 
   } catch (error) {
 
@@ -28,22 +31,8 @@ const askAI = async (prompt) => {
       error.message
     );
 
-    if (
-      error.message.includes("API key")
-    ) {
-      return "Invalid Gemini API key.";
-    }
-
-    if (
-      error.message.includes("quota")
-    ) {
-      return "Gemini quota exceeded.";
-    }
-
-    return "AI service temporarily unavailable.";
+    return "AI service unavailable.";
   }
 };
 
-module.exports = {
-  askAI,
-};
+module.exports = askAI;

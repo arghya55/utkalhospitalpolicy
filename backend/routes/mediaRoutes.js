@@ -30,9 +30,9 @@ const storage = multer.diskStorage({
     cb(
       null,
       Date.now() +
-        path.extname(
-          file.originalname
-        )
+      path.extname(
+        file.originalname
+      )
     );
   },
 });
@@ -213,7 +213,7 @@ router.post(
           // LOCAL FILE URL
 
           url:
-            `/uploads/${req.file.filename}`,
+            `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`,
 
           public_id:
             req.file.filename,

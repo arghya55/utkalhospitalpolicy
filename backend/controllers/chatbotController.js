@@ -1,6 +1,8 @@
   const Policy = require("../models/Policy");
   const Sop = require("../models/sop");
   const Department = require("../models/Department");
+const askAI =
+require("../services/aiServices");
 
   // ======================================================
   // CHATBOT
@@ -27,17 +29,26 @@
       const searchText =
         message.toLowerCase().trim();
 
-    const words =
-    searchText
-      .split(" ")
-      .filter(
-        (word) =>
-          word !== "policy" &&
-          word !== "policies" &&
-          word !== "sop" &&
-          word !== "sops" &&
-          word.trim() !== ""
-      );
+    const stopWords = [
+  "what",
+  "is",
+  "the",
+  "how",
+  "to",
+  "a",
+  "an",
+  "of",
+  "for",
+  "and"
+];
+
+const words =
+searchText
+  .split(" ")
+  .filter(
+    (word) =>
+      !stopWords.includes(word)
+  )
 
       const isPolicySearch =
         searchText.includes("policy");
@@ -347,35 +358,38 @@
       // ======================================================
 
       let matchedPolicies =
-        allPolicies.filter((policy) => {
+  allPolicies.filter((policy) => {
 
-          const text =
-            (
-              policy.title +
-              " " +
-              policy.description
-            ).toLowerCase();
+    const text =
+      (
+        policy.title +
+        " " +
+        policy.description
+      ).toLowerCase();
 
-          const departmentMatch =
-            department
-              ? String(
-                  policy.department?._id
-                ) ===
-                String(
-                  department._id
-                )
-              : true;
+    const departmentMatch =
+      department
+        ? String(
+            policy.department?._id
+          ) ===
+          String(
+            department._id
+          )
+        : true;
 
-          const keywordMatch =
-            words.some((word) =>
-              text.includes(word)
-            );
+    const matchedCount =
+      words.filter((word) =>
+        text.includes(word)
+      ).length;
 
-          return (
-            departmentMatch &&
-            keywordMatch
-          );
-        });
+    const keywordMatch =
+      matchedCount >= 2;
+
+    return (
+      departmentMatch &&
+      keywordMatch
+    );
+});
 
       let matchedSops =
         allSops.filter((sop) => {
@@ -408,17 +422,26 @@
           );
         });
 
-      if (
-        matchedPolicies.length === 0 &&
-        matchedSops.length === 0
-      ) {
+   if (
+  matchedPolicies.length === 0 &&
+  matchedSops.length === 0
+) {
+  const aiPrompt = `
+You are a hospital assistant.
+ONLY answer using general knowledge.
+Do not assume internal policies.
 
-        return res.json({
-          success: true,
-          answer:
-            "No matching records found.",
-        });
-      }
+User Question:
+${message}
+`;
+
+  const aiReply = await askAI(aiPrompt);
+
+  return res.json({
+    success: true,
+    answer: aiReply,
+  });
+}
 
       let responseText = "";
 

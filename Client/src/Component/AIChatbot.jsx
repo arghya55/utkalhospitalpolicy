@@ -6,6 +6,8 @@ import React, {
 
 import { api } from "../api";
 
+import ReactMarkdown from "react-markdown";
+
 import "./AIChatbot.css";
 
 const AIChatbot = () => {
@@ -36,8 +38,18 @@ const AIChatbot = () => {
   useState(false);
   const popupTimerRef = useRef(null);
 
+  const [typingText, setTypingText] =
+useState("");
+
+const [user, setUser] = useState(null); 
+
   const messagesEndRef =
     useRef(null);
+
+    useEffect(() => {
+        const storedUser = JSON.parse(sessionStorage.getItem("user"));
+        setUser(storedUser);
+      }, []);
 
   // =========================================
   // AUTO SCROLL
@@ -172,6 +184,22 @@ useEffect(() => {
   }, [messageIndex,  popupPaused,
   popupMessages]);
 
+//   useEffect(() => {
+
+//   const oldChats =
+//     localStorage.getItem(
+//       "utkal_ai_chat"
+//     );
+
+//   if (oldChats) {
+
+//     setMessages(
+//       JSON.parse(oldChats)
+//     );
+//   }
+
+// }, []);
+
   // =========================================
   // LOAD SUGGESTIONS
   // =========================================
@@ -257,6 +285,14 @@ popupTimerRef.current =
       userMessage,
     ]);
 
+//     localStorage.setItem(
+//   "utkal_ai_chat",
+//   JSON.stringify([
+//     ...messages,
+//     userMessage,
+//   ])
+// );
+
     setLoading(true);
 
     setSuggestions([]);
@@ -277,32 +313,76 @@ popupTimerRef.current =
           res.data.answer,
       };
 
-      setMessages((prev) => [
-        ...prev,
-        botMessage,
-      ]);
+      let currentText = "";
 
-    } catch (err) {
+const fullText =
+  res.data.answer;
 
-      console.log(err);
+      let displayed = "";
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "bot",
-          text:
-            "❌ Server Error",
-        },
-      ]);
+      
+    // HOW MANY LETTER SHOW
+    const chunkSize = 10;
 
-    } finally {
+    // SPEED
+    const speed = 1;
 
-      setLoading(false);
+ for (
+      let i = 0;
+      i < fullText.length;
+      i += chunkSize
+    ) {
+         displayed +=
+        fullText.slice(
+          i,
+          i + chunkSize
+        );
 
-      setInput("");
+      setTypingText(
+        displayed
+      );
+
+
+    await new Promise(
+        (resolve) =>
+          setTimeout(
+            resolve,
+            speed
+          )
+      );
     }
-  };
 
+
+  setMessages((prev) => [
+      ...prev,
+      {
+        type: "bot",
+        text: fullText,
+      },
+    ]);
+
+    setTypingText("");
+
+  } catch (err) {
+
+    console.log(err);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "bot",
+        text:
+          "❌ Server Error",
+      },
+    ]);
+
+  } finally {
+
+    setLoading(false);
+
+    setInput("");
+  }
+};
   // =========================================
   // VOICE INPUT
   // =========================================
@@ -388,8 +468,8 @@ popupTimerRef.current =
         </div>
       )}
         
-
-        <button
+        {user && (
+          <button
           className="chatlogoutbtn"
           onClick={() => {
 
@@ -403,6 +483,8 @@ popupTimerRef.current =
         >
           Logout
         </button>
+        )}
+        
 
       </div>
 
@@ -442,9 +524,9 @@ popupTimerRef.current =
                 .split("\n")
                 .map((line, i) => (
 
-                  <p key={i}>
-                    {line}
-                  </p>
+                  <ReactMarkdown key={i}>
+  {line}
+</ReactMarkdown>
               ))}
 
             </div>
@@ -465,6 +547,17 @@ popupTimerRef.current =
 
           </div>
         )}
+
+        {typingText && (
+
+  <div className="message bot">
+
+    <ReactMarkdown>
+      {typingText}
+    </ReactMarkdown>
+
+  </div>
+)}
 
         <div ref={messagesEndRef} />
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../api";
 import MediaUpload from "../Component/MediaUpload";
-import logo from "../assets/utkal-logo.png";
 import "./DepartmentPage.css";
 
 import {
@@ -15,7 +14,7 @@ const DepartmentPage = ({ deptId }) => {
   const [policies, setPolicies] = useState([]);
   const [sops, setSops] = useState([]);
   const [user, setUser] = useState(null);
-  
+
   const [filterType, setFilterType] = useState("Policy");
 
   const [search, setSearch] = useState("");
@@ -28,28 +27,28 @@ const DepartmentPage = ({ deptId }) => {
   const [showSopModal, setShowSopModal] = useState(false);
   const [editSop, setEditSop] = useState(null);
 
-const [showGoTop, setShowGoTop] = useState(false);
+  const [showGoTop, setShowGoTop] = useState(false);
 
-useEffect(() => {
-  const handleScroll = () => {
-    setShowGoTop(window.scrollY > 300);
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowGoTop(window.scrollY > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
-
-  window.addEventListener("scroll", handleScroll);
-  return () => window.removeEventListener("scroll", handleScroll);
-}, []);
-
-const scrollTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
 
 
   // const user = JSON.parse(sessionStorage.getItem("user"));
 
-    // ================= FETCH USER =================
+  // ================= FETCH USER =================
   useEffect(() => {
     const storedUser = JSON.parse(sessionStorage.getItem("user"));
     setUser(storedUser);
@@ -108,17 +107,17 @@ const scrollTop = () => {
   // ================= FETCH SOPS =================
   const fetchSops = async () => {
     try {
-          const token = sessionStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await api.get(
         `/sops?departmentId=${deptId}`,
-         {
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      }
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        }
       );
 
-    console.log("SOPS:", res.data); // 🔥 DEBUG
+      console.log("SOPS:", res.data); // 🔥 DEBUG
       setSops(res.data);
 
     } catch (err) {
@@ -273,6 +272,73 @@ const scrollTop = () => {
     }
   };
 
+  const movePolicy = (index, direction) => {
+
+    const updated = [...policies];
+
+    if (
+      direction === "up" &&
+      index > 0
+    ) {
+      [
+        updated[index - 1],
+        updated[index],
+      ] = [
+          updated[index],
+          updated[index - 1],
+        ];
+    }
+
+    if (
+      direction === "down" &&
+      index < updated.length - 1
+    ) {
+      [
+        updated[index + 1],
+        updated[index],
+      ] = [
+          updated[index],
+          updated[index + 1],
+        ];
+    }
+
+    setPolicies(updated);
+  };
+
+
+  const moveSop = (index, direction) => {
+
+    const updated = [...sops];
+
+    if (
+      direction === "up" &&
+      index > 0
+    ) {
+      [
+        updated[index - 1],
+        updated[index],
+      ] = [
+          updated[index],
+          updated[index - 1],
+        ];
+    }
+
+    if (
+      direction === "down" &&
+      index < updated.length - 1
+    ) {
+      [
+        updated[index + 1],
+        updated[index],
+      ] = [
+          updated[index],
+          updated[index + 1],
+        ];
+    }
+
+    setSops(updated);
+  };
+
 
 
 
@@ -281,336 +347,362 @@ const scrollTop = () => {
     user &&
     user.canAddPolicy &&
     String(user.department) ===
-      String(department?._id);
+    String(department?._id);
 
-        // ================= FILTERED DATA =================//
+  // ================= FILTERED DATA =================//
   const visiblePolicies = (
-  canManage
-    ? policies
-    : policies.filter((p) => p.status === "Active")
-).filter((p) =>
-  p.title.toLowerCase().includes(search.toLowerCase()) ||
-  p.description.toLowerCase().includes(search.toLowerCase())
-);
+    canManage
+      ? policies
+      : policies.filter((p) => p.status === "Active")
+  ).filter((p) =>
+    p.title.toLowerCase().includes(search.toLowerCase()) ||
+    p.description.toLowerCase().includes(search.toLowerCase())
+  );
 
-const visibleSops = (
-  canManage
-    ? sops
-    : sops.filter((s) => s.status === "Active")
-).filter((s) =>
-  s.title.toLowerCase().includes(search.toLowerCase()) ||
-  s.description.toLowerCase().includes(search.toLowerCase())
-);
+  const visibleSops = (
+    canManage
+      ? sops
+      : sops.filter((s) => s.status === "Active")
+  ).filter((s) =>
+    s.title.toLowerCase().includes(search.toLowerCase()) ||
+    s.description.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="dept-container">
-      
+
       {/* ================= NAVBAR ================= */}
-<div className="dept-header">
 
-  <div className="top-navbar">
+      <div className="dept-header">
 
-    <div className="nav-left">
+        <div className="main-navbar">
 
-      <div className="logo-box">
-        <img src={logo} alt="logo" />
+          {/* LEFT SECTION */}
+          <div className="navbar-left">
+
+            <button
+              className="backbtn"
+              onClick={() => (window.location.hash = "#/policy")}
+            >
+              ← Back
+            </button>
+
+            <button
+              className="backbtnhome"
+              onClick={() => (window.location.hash = "#/Home")}
+            >
+              ⌂ Home
+            </button>
+
+          </div>
+
+          {/* CENTER */}
+          <div className="navbar-center">
+
+            <h1 className="dept-name">
+              SOP / Policy of {department?.name || "Department"}
+            </h1>
+
+          </div>
+
+          {/* RIGHT */}
+          <div className="navbar-right">
+
+            <input
+              type="text"
+              placeholder="Search SOP & Policy..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="filter-box">
+
+              <h4 className="select-to-view">
+                Select To View Category
+              </h4>
+
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="filter-dropdown"
+              >
+                <option value="Policy">
+                  Policy
+                </option>
+
+                <option value="SOP">
+                  SOP
+                </option>
+
+              </select>
+
+            </div>
+
+            {canManage && (
+              <>
+                <button
+                  className="add-policy-btn"
+                  onClick={() =>
+                    (window.location.hash = "#/page/addpolicy")
+                  }
+                >
+                  Add Policy
+                </button>
+
+                <button
+                  className="add-sop-btn"
+                  onClick={() =>
+                    (window.location.hash = "#/page/addsop")
+                  }
+                >
+                  Add SOP
+                </button>
+
+                <MediaUpload deptId={deptId} />
+              </>
+            )}
+
+            <button
+              className="media-btn"
+              onClick={() =>
+                (window.location.hash = `#/media/${deptId}`)
+              }
+            >
+              📁 Media
+            </button>
+
+            {user && (
+              <button
+                className="logoutbtn"
+                onClick={() => {
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  window.location.hash = "#/";
+                }}
+              >
+                Logout
+              </button>
+            )}
+
+          </div>
+
+        </div>
+
       </div>
-
-      <button
-        className="backbtn"
-        onClick={() => (window.location.hash = "#/policy")}
-      >
-        ← Back
-      </button>
-
-      <button
-        className="backbtnhome"
-        onClick={() => (window.location.hash = "#/Home")}
-      >
-        ⌂ Home
-      </button>
-
-       <div className="welcome-section">
-    <h1 className="dept-name">
-      SOP / Policy of {department?.name || "Department"}
-    </h1>
-  </div>
-
-<input
-  type="text"
-  placeholder="Search Sop & Policy..."
-  value={search}
-  onChange={(e) =>
-    setSearch(e.target.value)
-  }
-/>
-
-    </div>
-
-    <div className="welcmbox">
-
-      <h3>
-        Welcome {user?.name ? `: ${user.name}` : ""}
-      </h3>
-
-      <button
-        className="logoutbtn"
-        onClick={() => {
-          localStorage.clear();
-          sessionStorage.clear();
-          window.location.hash = "#/";
-        }}
-      >
-        Logout
-      </button>
-
-    </div>
-
-  </div>
-
-  <div className="nav-right">
-
-<div className="action-toolbar">
-
-  <div className="filter-box">
-
-    <h4 className="category-title">
-      Select Category to View
-    </h4>
-
-    <select
-      value={filterType}
-      onChange={(e) => setFilterType(e.target.value)}
-      className="filter-dropdown"
-    >
-      <option value="Policy">Policy</option>
-      <option value="SOP">SOP</option>
-    </select>
-
-  </div>
-
-  <div className="action-buttons">
-
-    {canManage && (
-      <button
-        className="add-policy-btn"
-        onClick={() =>
-          (window.location.hash = "#/page/addpolicy")
-        }
-      >
-        Add Policy
-      </button>
-    )}
-
-    {canManage && (
-      <button
-        className="add-sop-btn"
-        onClick={() =>
-          (window.location.hash = "#/page/addsop")
-        }
-      >
-        Add SOP
-      </button>
-    )}
-
-  </div>
-
-</div>
-
-    {canManage && <MediaUpload deptId={deptId} />}
-
-    <button
-      className="media-btn"
-      onClick={() =>
-        (window.location.hash = `#/media/${deptId}`)
-      }
-    >
-      📁 Media Library
-    </button>
-
-  </div>
-
-</div>
-         <p className="filtertype-change-name">
-  {filterType === "All"
-    ? "All Documents"
-    : filterType}
-</p>
+      <p className="filtertype-change-name">
+        {filterType === "Policy"
+          ? "Policy"
+          : filterType}
+      </p>
       {/* ================= POLICIES ================= */}
       {(filterType === "All" ||
         filterType === "Policy") && (
 
-        <div className="policy-grid">
+          <div className="policy-grid">
 
-          {visiblePolicies.map((p) => (
+            {visiblePolicies.map((p, index) => (
 
-            <div
-              key={p._id}
-              className="policy-card"
-            >
+              <div
+                key={p._id}
+                className="policy-card"
+              >
 
-              <div className="policy-header">
+                <div className="policy-header">
 
-                <div className="policy-title">
-                  <h3>{p.title}</h3>
+                  <div className="policy-title">
+                    <h3>{index + 1}. {p.title}</h3>
+                  </div>
+
+                  <div className="policy-right">
+                    {canManage && (
+                      <select
+                        value={p.status}
+                        onChange={(e) =>
+                          handleStatusChange(
+                            p._id,
+                            "policy",
+                            e.target.value
+                          )
+                        }
+                        className={`status-dropdown ${p.status === "Active"
+                          ? "active"
+                          : "inactive"
+                          }`}
+                      >
+                        <option value="Active">
+                          Active
+                        </option>
+
+                        <option value="Inactive">
+                          Inactive
+                        </option>
+
+                      </select>
+                    )}
+
+
+                    {canManage && (
+                      <div className="card-actions">
+
+                        <button
+                          className="edit-btn"
+                          onClick={() =>
+                            handleEdit(p)
+                          }
+                        >
+                          ✏️ Edit
+                        </button>
+
+                          {index !== 0 && (
+                            <button
+                          className="move-btn"
+                          onClick={() => movePolicy(index, "up")}
+                        >
+                          ↑
+                        </button>
+                          )}
+                        
+                          {index!== visiblePolicies.length -1 && (
+                             <button
+                          className="move-btn"
+                          onClick={() => movePolicy(index, "down")}
+                        >
+                          ↓
+                        </button>
+                          )}
+                       
+
+                        <button
+                          className="delete-btn"
+                          onClick={() =>
+                            handleDelete(p._id)
+                          }
+                        >
+                          🗑 Delete
+                        </button>
+
+                      </div>
+                    )}
+
+                  </div>
+
                 </div>
 
-                <div className="policy-right">
-                  {canManage && (
-                    <select
-                    value={p.status}
-                    onChange={(e) =>
-                      handleStatusChange(
-                        p._id,
-                        "policy",
-                        e.target.value
-                      )
-                    }
-                    className={`status-dropdown ${
-                      p.status === "Active"
-                        ? "active"
-                        : "inactive"
-                    }`}
-                  >
-                    <option value="Active">
-                      Active
-                    </option>
-
-                    <option value="Inactive">
-                      Inactive
-                    </option>
-
-                  </select>
-                  )}
-                  
-
-                  {canManage && (
-                    <div className="card-actions">
-
-                      <button
-                        className="edit-btn"
-                        onClick={() =>
-                          handleEdit(p)
-                        }
-                      >
-                        ✏️ Edit
-                      </button>
-
-                      <button
-                        className="delete-btn"
-                        onClick={() =>
-                          handleDelete(p._id)
-                        }
-                      >
-                        🗑 Delete
-                      </button>
-
-                    </div>
-                  )}
-
-                </div>
+                <p>
+                  {p.description.match(/.{1,139}(\s|$)/g)?.join("\n")}
+                </p>
 
               </div>
 
-            <p>
-  {p.description.match(/.{1,139}(\s|$)/g)?.join("\n")}
-</p>
+            ))}
 
-            </div>
-
-          ))}
-
-        </div>
-      )}
+          </div>
+        )}
 
       {/* ================= SOPS ================= */}
       {(filterType === "All" ||
-  filterType === "SOP") &&
-  visibleSops &&
-  visibleSops.length > 0 && (
+        filterType === "SOP") &&
+        visibleSops &&
+        visibleSops.length > 0 && (
 
-        <div className="policy-grid">
+          <div className="policy-grid">
 
-          {visibleSops.map((s) => (
+            {visibleSops.map((s, index) => (
 
-            <div
-              key={s._id}
-              className="policy-card"
-            >
+              <div
+                key={s._id}
+                className="policy-card"
+              >
 
-              <div className="policy-header">
+                <div className="policy-header">
 
-                <div className="policy-title">
-                  <h3>{s.title}</h3>
+                  <div className="policy-title">
+                    <h3>{index + 1}. {s.title}</h3>
+                  </div>
+
+                  <div className="policy-right">
+
+                    {canManage && (
+                      <select
+                        value={s.status}
+                        onChange={(e) =>
+                          handleStatusChange(
+                            s._id,
+                            "sop",
+                            e.target.value
+                          )
+                        }
+                        className={`status-dropdown ${s.status === "Active"
+                          ? "active"
+                          : "inactive"
+                          }`}
+                      >
+                        <option value="Active">
+                          Active
+                        </option>
+
+                        <option value="Inactive">
+                          Inactive
+                        </option>
+
+                      </select>
+                    )}
+
+                    {canManage && (
+                      <div className="card-actions">
+
+                        <button
+                          className="edit-btn"
+                          onClick={() =>
+                            handleSopEdit(s)
+                          }
+                        >
+                          ✏️ Edit
+                        </button>
+                          {index !==0 && (
+                            <button
+                          className="move-btn"
+                          onClick={() => moveSop(index, "up")}
+                        >
+                          ↑
+                        </button>
+                          )}
+                        
+                          {index!== visibleSops.length - 1 && (
+                            <button
+                          className="move-btn"
+                          onClick={() => moveSop(index, "down")}
+                        >
+                          ↓
+                        </button>
+                          )}
+                        
+
+                        <button
+                          className="delete-btn"
+                          onClick={() =>
+                            handleSopDelete(s._id)
+                          }
+                        >
+                          🗑 Delete
+                        </button>
+
+                      </div>
+                    )}
+
+                  </div>
+
                 </div>
 
-                <div className="policy-right">
-
-                  {canManage && (
-                    <select
-                    value={s.status}
-                    onChange={(e) =>
-                      handleStatusChange(
-                        s._id,
-                        "sop",
-                        e.target.value
-                      )
-                    }
-                    className={`status-dropdown ${
-                      s.status === "Active"
-                        ? "active"
-                        : "inactive"
-                    }`}
-                  >
-                    <option value="Active">
-                      Active
-                    </option>
-
-                    <option value="Inactive">
-                      Inactive
-                    </option>
-
-                  </select>
-                  )}
-
-                  {canManage && (
-                    <div className="card-actions">
-
-                      <button
-                        className="edit-btn"
-                        onClick={() =>
-                          handleSopEdit(s)
-                        }
-                      >
-                        ✏️ Edit
-                      </button>
-
-                      <button
-                        className="delete-btn"
-                        onClick={() =>
-                          handleSopDelete(s._id)
-                        }
-                      >
-                        🗑 Delete
-                      </button>
-
-                    </div>
-                  )}
-
-                </div>
+                <p>
+                  {s.description.match(/.{1,139}(\s|$)/g)?.join("\n")}
+                </p>
 
               </div>
 
-             <p>
-  {s.description.match(/.{1,139}(\s|$)/g)?.join("\n")}
-</p>
+            ))}
 
-            </div>
-
-          ))}
-
-        </div>
-      )}
+          </div>
+        )}
 
       {/* ================= POLICY MODAL ================= */}
       {showModal && (
@@ -632,7 +724,7 @@ const visibleSops = (
                 })
               }
             />
-              <h4 >
+            <h4 >
               Write Policy Content Here
             </h4>
             <textarea
@@ -700,7 +792,7 @@ const visibleSops = (
           <div className="modal-content">
 
             <h2>Edit SOP</h2>
- <h4 >
+            <h4 >
               Write Sop Title Here
             </h4>
             <input
@@ -713,7 +805,7 @@ const visibleSops = (
                 })
               }
             />
-             <h4 >
+            <h4 >
               Write Sop Content Here
             </h4>
 
@@ -774,91 +866,91 @@ const visibleSops = (
 
         </div>
       )}
-<footer className="footer">
+      <footer className="footer">
 
-  <div className="footer-container">
+        <div className="footer-container">
 
-    {/* LEFT */}
+          {/* LEFT */}
 
-    <div className="footer-about">
+          <div className="footer-about">
 
-      <h2>Utkal Healthcare Private Limited</h2>
+            <h2>Utkal Healthcare Private Limited</h2>
 
-      <div className="footer-contact">
+            <div className="footer-contact">
 
-      <h3>Contact Us</h3>
+              <h3>Contact Us</h3>
 
-      <p>
-        📧 it@utkalhospital.com
-      </p>
+              <p>
+                📧 it@utkalhospital.com
+              </p>
 
-      <p>
-        📍 PLOT-321, PLOT NO-C/3,
-        WARD -BH -C III, NILADRI VIHAR,
-        BHUBANESWAR, Khordha,
-        Odisha - 751021
-      </p>
+              <p>
+                📍 PLOT-321, PLOT NO-C/3,
+                WARD -BH -C III, NILADRI VIHAR,
+                BHUBANESWAR, Khordha,
+                Odisha - 751021
+              </p>
 
+            </div>
+
+          </div>
+
+          {/* SERVICES */}
+
+          <div className="footer-links">
+
+            <h3>Quick Links</h3>
+
+            <a href="#/policy">
+              Departments
+            </a>
+
+            <a href={`#/media/${deptId}`}>
+              Media Library
+            </a>
+
+            {canManage && (
+              <a href="#/page/addpolicy">
+                Add Policy
+              </a>
+            )}
+
+            {canManage && (
+              <a href="#/page/addsop">
+                Add SOP
+              </a>
+            )}
+
+            <a href="#/Home">
+              Dashboard
+            </a>
+
+          </div>
+          {showGoTop && (
+            <div className="go-top-btn" onClick={scrollTop}>
+              ↑ Go Top
+            </div>
+          )}
+
+          {/* CONTACT */}
+
+
+
+        </div>
+
+        {/* BOTTOM */}
+
+        <div className="footer-bottom">
+          © 2026 | Developed by
+          <span className="developer-name">
+            {" "}Arghya Dey
+          </span>
+          {" "}from IT Department
+        </div>
+
+      </footer>
     </div>
 
-    </div>
-
-    {/* SERVICES */}
-
-    <div className="footer-links">
-
-      <h3>Quick Links</h3>
-
-      <a href="#/policy">
-        Departments
-      </a>
-
-      <a href={`#/media/${deptId}`}>
-        Media Library
-      </a>
-
-      {canManage && (
-        <a href="#/page/addpolicy">
-          Add Policy
-        </a>
-      )}
-
-      {canManage && (
-        <a href="#/page/addsop">
-          Add SOP
-        </a>
-      )}
-
-      <a href="#/Home">
-        Dashboard
-      </a>
-
-    </div>
-     {showGoTop && (
-  <div className="go-top-btn" onClick={scrollTop}>
-    ↑ Go Top
-  </div>
-)}
-
-    {/* CONTACT */}
-
-    
-
-  </div>
-
-  {/* BOTTOM */}
-
-  <div className="footer-bottom">
-  © 2026 | Developed by
-  <span className="developer-name">
-    {" "}Arghya Dey
-  </span>
-  {" "}from IT Department
-</div>
-
-</footer>
-    </div>
-    
   );
 };
 

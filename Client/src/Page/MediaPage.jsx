@@ -34,11 +34,20 @@ const MediaPage = ({
       }
     };
 
-  const fixUrl = (url) =>
-    url?.replace(
-      "/upload/",
-      "/upload/q_auto,f_auto/"
-    );
+  const fixUrl = (url, type = "") => {
+
+    // IMAGE optimization
+    if (type.includes("image")) {
+
+      return url?.replace(
+        "/upload/",
+        "/upload/q_auto,f_auto/"
+      );
+    }
+
+    // VIDEO no optimization
+    return url;
+  };
 
   return (
     <div className="media-page">
@@ -72,12 +81,11 @@ const MediaPage = ({
               {type.includes("image") && (
 
                 <img
-                  src={fixUrl(m.url)}
+                  src={fixUrl(m.url, type)}
                   alt={m.title}
                   width="300"
                   style={{
-                    borderRadius:
-                      "8px",
+                    borderRadius: "8px",
                   }}
                 />
               )}
@@ -96,34 +104,20 @@ const MediaPage = ({
                 )
               ) && (
 
-                <video
-                  width="350"
-                  height="250"
-                  controls
-                  preload="metadata"
-                  style={{
-                    borderRadius:
-                      "10px",
+                  <video
+                    className="media-video"
+                    controls
+                    preload="metadata"
+                    playsInline
+                  >
+                    <source
+                      src={m.url}
+                      type="video/mp4"
+                    />
 
-                    background:
-                      "#000",
-
-                    objectFit:
-                      "cover",
-                  }}
-                >
-                  <source
-                    src={fixUrl(
-                      m.url
-                    )}
-                    type="video/mp4"
-                  />
-
-                  Your browser
-                  does not
-                  support video.
-                </video>
-              )}
+                    Your browser does not support video.
+                  </video>
+                )}
 
               {/* FILE */}
 
@@ -142,24 +136,24 @@ const MediaPage = ({
                 )
               ) && (
 
-                <div>
+                  <div>
 
-                  <p>
-                    📄{" "}
-                    {m.type ||
-                      "file"}
-                  </p>
+                    <p>
+                      📄{" "}
+                      {m.type ||
+                        "file"}
+                    </p>
 
-                  <a
-                    href={m.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open File
-                  </a>
+                    <a
+                      href={m.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open File
+                    </a>
 
-                </div>
-              )}
+                  </div>
+                )}
 
             </div>
           );
