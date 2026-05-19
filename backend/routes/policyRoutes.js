@@ -4,6 +4,11 @@ const Policy = require("../models/Policy");
 const User = require("../models/User");
 const auth = require("../Middleware/auth");
 
+
+const {
+  reorderPolicies,
+} = require("../controllers/policyController");
+
 // CREATE POLICY
 router.post("/", auth, async (req, res) => {
   try {
@@ -13,11 +18,21 @@ router.post("/", auth, async (req, res) => {
       return res.status(403).json({ message: "Not allowed" });
     }
 
- const policy = await Policy.create({
+const count =
+  await Policy.countDocuments({
+    department: user.department,
+  });
+
+const policy = await Policy.create({
   title: req.body.title,
+
   description: req.body.description,
-  department: user.department,   // 🔥 FORCE backend
+
+  department: user.department,
+
   createdBy: req.user.id,
+
+  order: count,
 });
 
     res.status(201).json(policy);
@@ -25,6 +40,8 @@ router.post("/", auth, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+router.put("/reorder", reorderPolicies);
 
 
 // ✅ FILTER (MUST BE FIRST)

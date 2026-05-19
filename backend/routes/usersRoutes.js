@@ -36,7 +36,7 @@ router.put("/:id", async (req, res) => {
   try {
     const updateData = { ...req.body };
 
-    // password change করলে hash হবে
+    // password change  hash 
     if (req.body.password) {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
       updateData.password = hashedPassword;
@@ -69,6 +69,25 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// ================= TOGGLE ACTIVE / INACTIVE =================
+router.patch("/:id/toggle", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isActive = !user.isActive;
+
+    await user.save();
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // USER LOGIN
 router.post("/login", async (req, res) => {
   try {
@@ -77,6 +96,12 @@ router.post("/login", async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
+
+    if (!user.isActive) {
+  return res.status(403).json({
+    message: "User is inactive. Contact admin."
+  });
+}
 
     const isMatch = await bcrypt.compare(req.body.password, user.password);
 
@@ -109,6 +134,8 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+
 
 
 module.exports = router;

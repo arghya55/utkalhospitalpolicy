@@ -4,11 +4,25 @@ const User = require("../models/User");
 const Sop = require("../models/sop");
 const auth = require("../Middleware/auth");
 
+const {
+  reorderSops,
+} = require("../controllers/sopController");
+
+
+
 
 // ================= CREATE SOP =================
 router.post("/", auth, async (req, res) => {
   try {
-    const sop = await Sop.create(req.body);
+   const count =
+  await Sop.countDocuments({
+    department: req.body.department,
+  });
+
+const sop = await Sop.create({
+  ...req.body,
+  order: count,
+});
 
     res.status(201).json(sop);
   } catch (err) {
@@ -19,6 +33,7 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
+router.put("/reorder", reorderSops);
 
 // ================= GET SOP =================
 router.get("/", async (req, res) => {

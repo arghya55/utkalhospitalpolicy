@@ -82,7 +82,7 @@
     linear-gradient(
       to bottom,
       transparent,
-      rgba(255,255,255,0.9)
+      rgba(240, 232, 232, 0.9)
     );
 
   box-shadow:
@@ -94,7 +94,7 @@
     linear-gradient(
       to bottom,
       transparent,
-      #fff9c4
+      #e6e4d6
     );
 
   box-shadow:
@@ -107,14 +107,14 @@
 
 .glass-fruit{
   background:
-    rgba(255,255,255,0.25);
+    rgba(16, 68, 3, 0.25);
 
   backdrop-filter:blur(12px);
 
   -webkit-backdrop-filter:blur(12px);
 
   border:
-    1px solid rgba(255,255,255,0.4);
+    1px solid rgba(253, 251, 251, 0.4);
 
   padding:14px 20px;
 
@@ -133,7 +133,7 @@
   cursor:pointer;
 
   box-shadow:
-    0 8px 25px rgba(0,0,0,0.4);
+    0 8px 25px rgba(224, 182, 182, 0.4);
 
   transition:all 0.3s ease;
 
@@ -141,10 +141,10 @@
 }
 
 .glass-fruit:hover{
-  transform:scale(1.08);
+  transform:scale(1.08);  
 
   background:
-    rgba(255,255,255,0.35);
+    rgba(173, 19, 19, 0.35);
 
   box-shadow:
     0 0 15px rgba(255,255,255,0.5),
@@ -152,7 +152,7 @@
 }
 
 .glass-fruit.primary{
-  border:2px solid #fff9c4;
+  border:2px solid #7e5d5d;
 
   box-shadow:
     0 0 20px rgba(255,249,196,0.4);

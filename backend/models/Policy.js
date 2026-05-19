@@ -17,6 +17,11 @@ const policySchema = new mongoose.Schema({
     default: "Active",
   },
 
+  order:{
+    type:Number,
+    default:0,
+  },
+
 }, {
   timestamps: true,
 });

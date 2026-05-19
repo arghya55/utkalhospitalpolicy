@@ -70,20 +70,20 @@ const CreateDepartment = () => {
         <h2>🏢 Department Management</h2>
         <p>Create & manage hospital departments</p>
         {/* BACK BUTTON */}
-<button
-  onClick={() => (window.location.hash = "/admin")}
-  style={{
-        background: "#0f172a",
-    color: "white",
-    border: "none",
-    padding: "8px 14px",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "500",
-  }}
->
-  ⬅ Back to Dashboard
-</button>
+        <button
+          onClick={() => (window.location.hash = "/admin")}
+          style={{
+            background: "#0f172a",
+            color: "white",
+            border: "none",
+            padding: "8px 14px",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontWeight: "500",
+          }}
+        >
+          ⬅ Back to Dashboard
+        </button>
       </div>
 
       {/* EDIT INFO */}
@@ -137,6 +137,15 @@ const CreateDepartment = () => {
               >
                 ✏️ Edit
               </button>
+              <button
+                className={d.isActive ? "active-btn" : "inactive-btn"}
+                onClick={async () => {
+                  await axios.patch(`/departments/${d._id}/toggle`);
+                  fetchDepartments();
+                }}
+              >
+                {d.isActive ? "Deactivate" : "Activate"}
+              </button>
 
               <button
                 className="delete-btn"
@@ -145,9 +154,13 @@ const CreateDepartment = () => {
                 ❌ Delete
               </button>
 
+
+
             </div>
 
           </div>
+
+
         ))}
 
       </div>

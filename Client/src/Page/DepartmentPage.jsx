@@ -65,7 +65,11 @@ const DepartmentPage = ({ deptId }) => {
   const fetchPolicies = async () => {
     try {
       const res = await api.get(`/policies?departmentId=${deptId}`);
-      setPolicies(res.data);
+     const sorted = res.data.sort(
+  (a, b) => a.order - b.order
+);
+
+setPolicies(sorted);
     } catch (err) {
       console.log(err);
     }
@@ -77,7 +81,11 @@ const DepartmentPage = ({ deptId }) => {
       const res = await api.get(`/sops?departmentId=${deptId}`, {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       });
-      setSops(res.data);
+      const sorted = res.data.sort(
+  (a, b) => a.order - b.order
+);
+
+setSops(sorted);
     } catch (err) {
       console.log(err);
     }
@@ -155,27 +163,93 @@ const DepartmentPage = ({ deptId }) => {
     }
   };
 
-  const movePolicy = (index, direction) => {
-    const updated = [...policies];
-    if (direction === "up" && index > 0) {
-      [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
-    }
-    if (direction === "down" && index < updated.length - 1) {
-      [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
-    }
-    setPolicies(updated);
-  };
+  const movePolicy = async (
+  index,
+  direction
+) => {
 
-  const moveSop = (index, direction) => {
-    const updated = [...sops];
-    if (direction === "up" && index > 0) {
-      [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
-    }
-    if (direction === "down" && index < updated.length - 1) {
-      [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
-    }
-    setSops(updated);
-  };
+  const updated = [...policies];
+
+  if (
+    direction === "up" &&
+    index > 0
+  ) {
+
+    [updated[index - 1], updated[index]] =
+      [updated[index], updated[index - 1]];
+  }
+
+  if (
+    direction === "down" &&
+    index < updated.length - 1
+  ) {
+
+    [updated[index + 1], updated[index]] =
+      [updated[index], updated[index + 1]];
+  }
+
+  setPolicies(updated);
+
+  try {
+
+    await api.put(
+      "/policies/reorder",
+      {
+        items: updated,
+      }
+    );
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Reorder failed");
+  }
+};
+
+  const moveSop = async (
+  index,
+  direction
+) => {
+
+  const updated = [...sops];
+
+  if (
+    direction === "up" &&
+    index > 0
+  ) {
+
+    [updated[index - 1], updated[index]] =
+      [updated[index], updated[index - 1]];
+  }
+
+  if (
+    direction === "down" &&
+    index < updated.length - 1
+  ) {
+
+    [updated[index + 1], updated[index]] =
+      [updated[index], updated[index + 1]];
+  }
+
+  setSops(updated);
+
+  try {
+
+    await api.put(
+      "/sops/reorder",
+      {
+        items: updated,
+      }
+    );
+
+  } catch (err) {
+
+    console.log(err);
+
+    alert("Reorder failed");
+  }
+};
 
   const canManage = user && user.canAddPolicy && String(user.department) === String(department?._id);
 
