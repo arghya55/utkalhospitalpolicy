@@ -30,13 +30,26 @@ const MediaPage = ({ deptId }) => {
     type.includes("training");
 
   const fixUrl = (url, type = "") => {
+
     if (!url) return "";
 
+    // FORCE HTTPS
+    let fixed =
+      url.replace(
+        "http://",
+        "https://"
+      );
+
+    // CLOUDINARY IMAGE OPTIMIZE
     if (type.includes("image")) {
-      return url.replace("/upload/", "/upload/q_auto,f_auto/");
+
+      fixed = fixed.replace(
+        "/upload/",
+        "/upload/q_auto,f_auto/"
+      );
     }
 
-    return url;
+    return fixed;
   };
 
   return (
@@ -65,6 +78,7 @@ const MediaPage = ({ deptId }) => {
               )}
 
               {/* VIDEO */}
+              {/* VIDEO */}
               {isVideo(type) && (
                 <video
                   className="media-video"
@@ -75,25 +89,34 @@ const MediaPage = ({ deptId }) => {
                     e.target.style.display = "none";
                   }}
                 >
-                  <source src={m.url} type="video/mp4" />
+                  <source
+                    src={fixUrl(m.url, type)}
+                    type="video/mp4"
+                  />
+
                   Your browser does not support video.
                 </video>
               )}
-
               {/* FILE */}
-              {!isImage(type) && !isVideo(type) && (
-                <div className="file-box">
-                  <p>📄 {m.type || "File"}</p>
+              {!isImage(type) &&
+                !isVideo(type) && (
 
-                  <a
-                    href={m.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open File
-                  </a>
-                </div>
-              )}
+                  <div className="file-box">
+
+                    <p>
+                      📄 {m.type || "File"}
+                    </p>
+
+                    <a
+                      href={fixUrl(m.url, type)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Open File
+                    </a>
+
+                  </div>
+                )}
             </div>
           );
         })}
